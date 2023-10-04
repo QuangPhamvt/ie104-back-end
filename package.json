@@ -6,6 +6,7 @@
     "dev": "bun run --watch src/index.ts",
     "format": "bun run prettier src/**/*.ts --check",
     "format:fix": "bun run prettier src/**/*.ts --write",
+    "build:server": "bun build src/index.ts --compile --outfile build/server",
     "prepare": "husky install"
   },
   "dependencies": {
