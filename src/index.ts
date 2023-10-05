@@ -1,6 +1,6 @@
 import { Elysia } from "elysia"
 import modules from "./modules"
-import config from "./config"
+import config from "config"
 
 const app = new Elysia({ prefix: "/api/v1" })
   .use(config.Document)

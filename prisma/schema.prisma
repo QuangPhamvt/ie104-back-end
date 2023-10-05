@@ -11,13 +11,14 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  role  Role    @default(BUYER)
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  name     String  @unique
+  password String? @db.VarChar(255)
+  role     Role    @default(Buyer)
 }
 
 enum Role {
-  BUYER
-  SELLER
+  Buyer
+  Seller
 }

@@ -17,8 +17,7 @@ jobs:
       - name: Setup Bunx
         uses: oven-sh/setup-bun@v1
         with:
-          bun-verison: ${{matrix.bun-verison}}
-
+          bun-version: latest
       - name: Install package use yarn
         run: |
           echo "We using bun to install package!"
@@ -31,4 +30,5 @@ jobs:
       - name: Build bunx
         run: |
           echo "Bun is Building"
+          bunx prisma generate
           bun build:server
