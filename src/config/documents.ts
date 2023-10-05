@@ -14,6 +14,11 @@ const document = swagger({
     info: {
       title: DOCUMENTATION.INFO.TITLE,
       version: DOCUMENTATION.INFO.VERSION,
+      contact: {
+        name: "CustomAFK",
+        url: "https://www.facebook.com/profile.php?id=100079764644387",
+        email: "quangpm220503vt@gmail.com",
+      },
     },
     tags: [
       { name: "App", description: "General Endpoint" },
