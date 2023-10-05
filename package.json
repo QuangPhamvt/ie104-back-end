@@ -3,16 +3,16 @@
   "author": "CustomAFK",
   "version": "v0.0.1",
   "scripts": {
-    "dev": "bun run --watch src/server.ts",
+    "dev": "bun run --watch src/index.ts",
     "format": "bun run prettier src/**/*.ts --check",
     "format:fix": "bun run prettier src/**/*.ts --write",
-    "build:server": "bun build src/server.ts --compile --outfile build/server",
+    "build:server": "bun build src/index.ts --compile --outfile build/server",
     "prepare": "husky install"
   },
   "dependencies": {
     "@elysiajs/jwt": "^0.7.0",
     "@elysiajs/swagger": "^0.7.3",
-    "@prisma/client": "5.3.1",
+    "@prisma/client": "latest",
     "elysia": "latest",
     "zod": "^3.22.3"
   },
@@ -23,7 +23,7 @@
     "husky": "^8.0.0",
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.3",
-    "prisma": "^5.3.1"
+    "prisma": "latest"
   },
   "husky": {
     "pre-commit": "lint-staged"
