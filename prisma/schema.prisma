@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,15 +7,101 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  name     String  @unique
-  password String? @db.VarChar(255)
-  role     Role    @default(Buyer)
-}
-
 enum Role {
   Buyer
   Seller
+}
+
+enum STATUS_CARTS {
+  Waiting
+  Ordered
+  Completed
+}
+
+enum STATUS_PAYMENTS {
+  Processing
+  Completed
+}
+
+model users {
+  id       String   @id @default(uuid())
+  email    String   @unique
+  username String?
+  role     Role     @default(Buyer)
+  password String?  @db.VarChar(255)
+  carts    carts[]
+  orders   orders[]
+}
+
+model categories {
+  id          String     @id @default(uuid())
+  slug        String     @unique
+  name        String
+  description String     @db.Text
+  create_at   DateTime   @default(now())
+  update_at   DateTime   @updatedAt
+  products    products[]
+}
+
+model products {
+  id            String        @id @default(uuid())
+  title         String        @unique
+  description   String        @db.Text
+  price         Decimal       @db.Decimal()
+  discount      Decimal       @db.Decimal()
+  categories_id String
+  cart_items    cart_items[]
+  order_items   order_items[]
+  category      categories    @relation(fields: [categories_id], references: [id])
+}
+
+model carts {
+  id         String       @id @default(uuid())
+  author_id  String
+  status     STATUS_CARTS @default(Waiting)
+  create_at  DateTime     @default(now())
+  update_at  DateTime     @updatedAt
+  cart_items cart_items[]
+  author     users        @relation(fields: [author_id], references: [id])
+}
+
+model cart_items {
+  cart_id    String
+  product_id String
+  price      Decimal  @db.Decimal()
+  quanlity   Int      @db.MediumInt
+  creat_at   DateTime @default(now())
+  cart       carts    @relation(fields: [cart_id], references: [id])
+  product    products @relation(fields: [product_id], references: [id])
+
+  @@unique([cart_id, product_id])
+}
+
+model payments {
+  id        String          @id @default(uuid())
+  amount    Decimal         @db.Decimal()
+  status    STATUS_PAYMENTS @default(Processing)
+  create_at DateTime        @default(now())
+  orders    orders[]
+}
+
+model orders {
+  id          String        @id @default(uuid())
+  user_id     String
+  payment_id  String
+  create_at   DateTime      @default(now())
+  order_items order_items[]
+  user        users         @relation(fields: [user_id], references: [id])
+  payment     payments      @relation(fields: [payment_id], references: [id])
+}
+
+model order_items {
+  id         String   @id @default(uuid())
+  order_id   String
+  product_id String
+  price      Decimal  @db.Decimal()
+  quantity   Int      @db.MediumInt
+  create_at  DateTime @default(now())
+  product    products @relation(fields: [product_id], references: [id])
+  order      orders   @relation(fields: [order_id], references: [id])
 }
