@@ -23,6 +23,7 @@ const document = swagger({
     tags: [
       { name: "App", description: "General Endpoint" },
       { name: "Auth", description: "Authorization: /auth" },
+      { name: "USER", description: "User information: /user" },
     ],
   },
 })
