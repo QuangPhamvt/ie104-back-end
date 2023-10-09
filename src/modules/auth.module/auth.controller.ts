@@ -2,6 +2,7 @@ import Elysia, { t } from "elysia"
 import { JWT_ACCESS_TOKEN, JWT_REFRESH_TOKEN } from "config"
 import authModel from "~/modules/auth.module/auth.model"
 import { profile, refreshToken, signIn, signUp } from "./auth.service"
+import authorization from "~/middlewares/authorization"
 
 const authController = new Elysia()
 const DETAIL = {
@@ -52,15 +53,18 @@ authController
       ...DETAIL,
     },
   )
-  .post(
+  .use(authorization)
+  .get(
     "/profile",
     (context) => {
-      const { JWT_ACCESS_TOKEN, body, set } = context
-      return profile({ JWT_ACCESS_TOKEN, body, set })
+      const { request, JWT_ACCESS_TOKEN, set } = context
+      return profile({ request, JWT_ACCESS_TOKEN, set })
     },
     {
-      body: "profile",
-      ...DETAIL,
+      detail: {
+        tags: ["Auth"],
+        security: [{ BearerAuth: [] }],
+      },
     },
   )
 

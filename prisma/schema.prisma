@@ -24,13 +24,14 @@ enum STATUS_PAYMENTS {
 }
 
 model users {
-  id       String   @id @default(uuid())
-  email    String   @unique
+  id       String     @id @default(uuid())
+  email    String     @unique
   username String?
-  role     Role     @default(Buyer)
-  password String?  @db.VarChar(255)
+  role     Role       @default(Buyer)
+  password String?    @db.VarChar(255)
   carts    carts[]
   orders   orders[]
+  products products[]
 }
 
 model categories {
@@ -53,6 +54,8 @@ model products {
   cart_items    cart_items[]
   order_items   order_items[]
   category      categories    @relation(fields: [categories_id], references: [id])
+  users         users?        @relation(fields: [users_id], references: [id])
+  users_id      String?
 }
 
 model carts {
