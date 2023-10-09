@@ -11,9 +11,10 @@ const app = new Elysia({ prefix: "/api/v1" })
     },
     { detail: { tags: ["App"] } },
   )
+  .onParse(({ request }, contentType) => {
+    if (contentType === "image/jpeg") return request.text()
+  })
   .use(modules)
   .listen(Bun.env.SERVER_PORT || 3000)
 
-console.log(
-  `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`,
-)
+console.log(`🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}/api/v1/document`)

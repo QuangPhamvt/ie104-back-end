@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.427.0",
+    "@aws-sdk/lib-storage": "^3.427.0",
+    "@aws-sdk/s3-request-presigner": "^3.427.0",
+    "@elysiajs/bearer": "^0.7.0",
     "@elysiajs/jwt": "^0.7.0",
     "@elysiajs/swagger": "^0.7.3",
     "@prisma/client": "latest",

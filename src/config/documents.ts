@@ -5,11 +5,12 @@ const DOCUMENT = {
 const DOCUMENTATION = {
   INFO: {
     TITLE: "IE104 BACK END",
-    VERSION: "0.0.1",
+    VERSION: "5.7.2",
   },
 }
 const document = swagger({
   path: DOCUMENT.PATH,
+  version: "5.7.2",
   documentation: {
     info: {
       title: DOCUMENTATION.INFO.TITLE,
@@ -25,6 +26,16 @@ const document = swagger({
       { name: "Auth", description: "Authorization: /auth" },
       { name: "USER", description: "User information: /user" },
     ],
+    components: {
+      securitySchemes: {
+        BearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
   },
+  autoDarkMode: false,
 })
 export default document

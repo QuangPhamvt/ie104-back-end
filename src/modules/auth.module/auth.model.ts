@@ -11,20 +11,16 @@ export const signInDto = t.Object({
 export const signUpDto = t.Object({
   email: t.String({ format: "email" }),
   password: t.String(),
-  name: t.String(),
+  username: t.String(),
   role: t.Enum(ROLE, { default: "Buyer" }),
 })
 export const refreshTokenDto = t.Object({
   refresh_token: t.String(),
-})
-export const profileDto = t.Object({
-  access_token: t.String(),
 })
 
 const authModel = new Elysia().model({
   signIn: signInDto,
   signUp: signUpDto,
   refreshToken: refreshTokenDto,
-  profile: profileDto,
 })
 export default authModel
