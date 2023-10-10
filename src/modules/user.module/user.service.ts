@@ -1,10 +1,19 @@
+import { prisma } from "config"
 import { getObject, upload } from "../../../aws/s3"
 
-export const getAvatar = async (request: Request) => {
+export const getAvatar = async (request: Request, set: any) => {
   try {
-    const id = request.headers.get("userId")
-    const data = await getObject(`user/${id}/avatar.webp`)
-    return data
+    const id = request.headers.get("userId") || ""
+    const user = await prisma.users.findUnique({
+      where: {
+        id,
+      },
+    })
+    if (user) return await getObject(user.avatar)
+    set.status = 400
+    return {
+      status: "Bad request",
+    }
   } catch (error) {
     console.log("🚀 ------------------------------------------------------🚀")
     console.log("🚀 ~ file: user.controller.ts:33 ~ .get ~ error:", error)
@@ -16,10 +25,19 @@ export const uploadAvatar = async ({ request, body, set }: { request: Request; b
   console.log("🚀 ---------------------------------------------------🚀")
   console.log("🚀 ~ file: user.controller.ts:52 ~ request:", request)
   console.log("🚀 ---------------------------------------------------🚀")
+  const id = request.headers.get("userId") || ""
+  const blob = new Blob([body.file], { type: "image" }) || ""
+  const avatarUrl = `user/${id}/avatar.webp`
   try {
-    const id = request.headers.get("userId")
-    const blob = new Blob([body.file], { type: "image/webp" })
-    await upload(`user/${id}/avatar.webp`, blob, typeof body.file)
+    await prisma.users.update({
+      where: {
+        id,
+      },
+      data: {
+        avatar: avatarUrl,
+      },
+    })
+    await upload(`user/${id}/avatar.webp`, blob, "image/webp")
     set.status = "Created"
     return {
       status: "Created",

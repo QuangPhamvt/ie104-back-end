@@ -25,13 +25,24 @@ enum STATUS_PAYMENTS {
 
 model users {
   id       String     @id @default(uuid())
+  avatar   String?
   email    String     @unique
-  username String?
+  username String
   role     Role       @default(Buyer)
-  password String?    @db.VarChar(255)
+  password String     @db.VarChar(255)
   carts    carts[]
   orders   orders[]
   products products[]
+  banks    banks?
+}
+
+model banks {
+  id           String @id @default(uuid())
+  author       users  @relation(fields: [author_id], references: [id])
+  author_id    String @unique
+  acqId        String
+  account_name String
+  account_no   String
 }
 
 model categories {
@@ -48,14 +59,15 @@ model products {
   id            String        @id @default(uuid())
   title         String        @unique
   description   String        @db.Text
-  price         Decimal       @db.Decimal()
-  discount      Decimal       @db.Decimal()
+  picture       String?
+  price         Decimal       @db.Decimal(10, 5)
+  discount      Decimal       @db.Decimal(10, 5)
   categories_id String
   cart_items    cart_items[]
   order_items   order_items[]
   category      categories    @relation(fields: [categories_id], references: [id])
-  users         users?        @relation(fields: [users_id], references: [id])
-  users_id      String?
+  author        users?        @relation(fields: [author_id], references: [id])
+  author_id     String?
 }
 
 model carts {
@@ -71,7 +83,7 @@ model carts {
 model cart_items {
   cart_id    String
   product_id String
-  price      Decimal  @db.Decimal()
+  price      Decimal  @db.Decimal(10, 5)
   quanlity   Int      @db.MediumInt
   creat_at   DateTime @default(now())
   cart       carts    @relation(fields: [cart_id], references: [id])
@@ -82,7 +94,7 @@ model cart_items {
 
 model payments {
   id        String          @id @default(uuid())
-  amount    Decimal         @db.Decimal()
+  amount    Decimal         @db.Decimal(10, 5)
   status    STATUS_PAYMENTS @default(Processing)
   create_at DateTime        @default(now())
   orders    orders[]
@@ -102,7 +114,7 @@ model order_items {
   id         String   @id @default(uuid())
   order_id   String
   product_id String
-  price      Decimal  @db.Decimal()
+  price      Decimal  @db.Decimal(10, 5)
   quantity   Int      @db.MediumInt
   create_at  DateTime @default(now())
   product    products @relation(fields: [product_id], references: [id])
