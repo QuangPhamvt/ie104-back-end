@@ -13,7 +13,9 @@ export const getObject = async (key: string) => {
     Key: key,
   }
   const command = new GetObjectCommand(input)
-  const url = await getSignedUrl(client, command)
+  const url = await getSignedUrl(client, command, {
+    expiresIn: 3600,
+  })
   return url
 }
 export const putObject = async (

@@ -25,6 +25,7 @@ const document = swagger({
       { name: "App", description: "General Endpoint" },
       { name: "Auth", description: "Authorization: /auth" },
       { name: "USER", description: "User information: /user" },
+      { name: "PRODUCT", description: "Product information: /product" },
     ],
     components: {
       securitySchemes: {
