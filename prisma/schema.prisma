@@ -94,7 +94,7 @@ model cart_items {
 
 model payments {
   id        String          @id @default(uuid())
-  amount    Decimal         @db.Decimal(10, 5)
+  amount    Decimal         @db.Decimal(20, 5)
   status    STATUS_PAYMENTS @default(Processing)
   create_at DateTime        @default(now())
   orders    orders[]

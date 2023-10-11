@@ -1,6 +1,7 @@
 import { prisma } from "config"
 import Elysia, { t } from "elysia"
 import { AuthorizationMiddleWare } from "~/middlewares"
+import { getObject } from "../../../aws/s3"
 
 const cartController = new Elysia()
 cartController
@@ -8,6 +9,73 @@ cartController
     return "Hello world"
   })
   .use(AuthorizationMiddleWare)
+  .get(
+    "",
+    async ({ request }) => {
+      const id = request.headers.get("userId") || ""
+      try {
+        const carts = await prisma.carts.findMany({
+          where: {
+            author_id: id,
+          },
+          select: {
+            id: true,
+            status: true,
+            cart_items: {
+              select: {
+                price: true,
+                quantity: true,
+                create_at: true,
+                product: {
+                  select: {
+                    title: true,
+                    picture: true,
+                    price: true,
+                    discount: true,
+                    author_id: false,
+                  },
+                },
+              },
+            },
+          },
+        })
+        const newCarts = await Promise.all(
+          carts.map(async (cart) => {
+            const newCart = await Promise.all(
+              cart.cart_items.map(async (cart_item) => {
+                const picture = await getObject(cart_item.product.picture || "")
+                return {
+                  ...cart_item,
+                  product: {
+                    ...cart_item.product,
+                    picture,
+                  },
+                }
+              }),
+            )
+            return {
+              ...cart,
+              newCart,
+            }
+          }),
+        )
+        return {
+          status: "Ok",
+          data: {
+            carts: newCarts,
+          },
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    {
+      detail: {
+        tags: ["CART"],
+        security: [{ BearerAuth: [] }],
+      },
+    },
+  )
   .post(
     "",
     async ({ request, body }) => {
