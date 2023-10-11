@@ -6,7 +6,7 @@ env:
   JWT_REFRESH_SECRETKEY: "ie104_refresh_token"
   JWT_REFRESH_EXPIRY: "3d"
   AWS_ACCESSKEY_ID: ${{secrets.AWS_ACCESSKEY_ID}}
-  AWS_SERCET_ACCESS_KEY: ${{secrets.AWS_SERCET_ACCESS_KEY}}
+  AWS_SERCET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
   AWS_BUCKET_NAME: ${{secrets.AWS_BUCKET_NAME}}
   CLIENT_ID: ${{secrets.CLIENT_ID}}
   API_KEY: ${{secrets.API_KEY}}
@@ -57,7 +57,7 @@ jobs:
           echo "\n\n#AWS key "
           echo "AWS_REGION=ap-southeast-1" >> .env
           echo "AWS_ACCESSKEY_ID=${{env.AWS_ACCESSKEY_ID}}" >> .env
-          echo "AWS_SERCET_ACCESS_KEY=${{env.AWS_SERCET_ACCESS_KEY}}" >> .env
+          echo "AWS_SERCET_ACCESS_KEY=${{env.AWS_SECRET_ACCESS_KEY}}" >> .env
           echo "AWS_BUCKET_NAME=${{env.AWS_BUCKET_NAME}}" >> .env
           echo "\n\n#KEY QR PAY"
           echo "CLIENT_ID=${{env.CLIENT_ID}}" >> .env
