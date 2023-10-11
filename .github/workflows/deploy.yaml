@@ -27,10 +27,6 @@ jobs:
       - name: Check code
         uses: actions/checkout@v4
 
-      - name: Setup Bunx
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
       - name: Install package use yarn
         run: |
           echo "We using bun to install package!"
