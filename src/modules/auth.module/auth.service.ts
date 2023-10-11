@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client"
+import { prisma } from "config"
 
-const prisma = new PrismaClient()
 interface authServiceDto {
   set: any
   JWT_ACCESS_TOKEN: any

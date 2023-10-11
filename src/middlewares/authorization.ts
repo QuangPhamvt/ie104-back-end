@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client"
-import { JWT_ACCESS_TOKEN } from "config"
+import { JWT_ACCESS_TOKEN, prisma } from "config"
 import Elysia from "elysia"
 
-const prisma = new PrismaClient()
 const authorization = new Elysia()
 authorization.use(JWT_ACCESS_TOKEN).onBeforeHandle(async ({ request, set, JWT_ACCESS_TOKEN }) => {
   console.log("🚀 ---------------------------------------------------------------------------------🚀")
