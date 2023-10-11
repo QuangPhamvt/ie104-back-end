@@ -84,8 +84,8 @@ model cart_items {
   cart_id    String
   product_id String
   price      Decimal  @db.Decimal(10, 5)
-  quanlity   Int      @db.MediumInt
-  creat_at   DateTime @default(now())
+  quantity   Int      @db.MediumInt
+  create_at  DateTime @default(now())
   cart       carts    @relation(fields: [cart_id], references: [id])
   product    products @relation(fields: [product_id], references: [id])
 

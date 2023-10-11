@@ -5,10 +5,6 @@ import Elysia from "elysia"
 const prisma = new PrismaClient()
 const authorization = new Elysia()
 authorization.use(JWT_ACCESS_TOKEN).onBeforeHandle(async ({ request, set, JWT_ACCESS_TOKEN }) => {
-  console.log("🚀 ---------------------------------------------------------------------------------🚀")
-  console.log("🚀 ~ file: authorization.ts:5 ~ authorization.use ~ authorization:")
-  console.log("🚀 ---------------------------------------------------------------------------------🚀")
-
   // Haven't Authorization
   if (!request.headers.get("authorization")) {
     set.status = 401
