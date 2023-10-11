@@ -22,7 +22,7 @@ jobs:
     strategy:
       matrix:
         bun-verison: [1.x.x]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Check code
         uses: actions/checkout@v4
