@@ -43,20 +43,28 @@ jobs:
 
       - name: Edit .env
         run: |
+          rm -rf .env
+          touch .env
+          echo "#DATABASE" >> .env
           echo "DATABASE_URL=${{env.DATABASE_URL}}" >> .env
+          echo "\n\n#SERVER RUNNING" >> .env
           echo "SERVER_PORT=3000" >> .env
+          echo "\n\n#Enviroment in Server"
           echo "JWT_ACCESS_SECRETKEY=${{env.JWT_ACCESS_SECRETKEY}}" >> .env
           echo "JWT_ACCESS_EXPIRY=${{env.JWT_ACCESS_EXPIRY}}" >> .env
           echo "JWT_REFRESH_SECRETKEY=${{env.JWT_REFRESH_SECRETKEY}}" >> .env
           echo "JWT_REFRESH_EXPIRY=${{env.JWT_REFRESH_EXPIRY}}" >> .env
+          echo "\n\n#AWS key "
           echo "AWS_REGION=ap-southeast-1" >> .env
           echo "AWS_ACCESSKEY_ID=${{env.AWS_ACCESSKEY_ID}}" >> .env
           echo "AWS_SERCET_ACCESS_KEY=${{env.AWS_SERCET_ACCESS_KEY}}" >> .env
           echo "AWS_BUCKET_NAME=${{env.AWS_BUCKET_NAME}}" >> .env
-          echo "CLIENT_ID=${{env.client_id}}" >> .env
+          echo "\n\n#KEY QR PAY"
+          echo "CLIENT_ID=${{env.CLIENT_ID}}" >> .env
           echo "API_KEY=${{env.API_KEY}}" >> .env
       - name: Build bunx
         run: |
           echo "Bun is Building"
+          bunx prisma db pull
           bunx prisma generate deploy
           bun build:server
