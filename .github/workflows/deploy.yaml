@@ -60,6 +60,3 @@ jobs:
           echo "Bun is Building"
           bunx prisma generate deploy
           bun build:server
-      - name: Run server
-        run: |
-          ./build/server
