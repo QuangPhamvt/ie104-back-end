@@ -39,7 +39,7 @@ jobs:
 
       - name: Edit .env
         run: |
-          # pm2 stop "ie104-back-end"
+          pm2 stop "ie104-back-end"
           rm -rf .env
           touch .env
           echo "#DATABASE" >> .env
@@ -65,4 +65,4 @@ jobs:
           bunx prisma db pull
           bunx prisma generate deploy
           bun build:server
-          # pm2 restart "ie104-back-end"
+          pm2 restart "ie104-back-end"
