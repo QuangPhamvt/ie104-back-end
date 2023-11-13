@@ -7,7 +7,7 @@ import authorization from "~/middlewares/authorization"
 const authController = new Elysia()
 const DETAIL = {
   detail: {
-    tags: ["Auth"],
+    tags: ["AUTH"],
   },
 }
 authController
@@ -62,7 +62,7 @@ authController
     },
     {
       detail: {
-        tags: ["Auth"],
+        tags: ["AUTH"],
         security: [{ BearerAuth: [] }],
       },
     },

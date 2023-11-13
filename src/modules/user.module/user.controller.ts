@@ -1,7 +1,7 @@
 import swagger from "@elysiajs/swagger"
 import Elysia, { t } from "elysia"
 import { getObject, upload } from "../../../aws/s3"
-import { JWT_ACCESS_TOKEN, JWT_REFRESH_TOKEN, prisma } from "config"
+import { JWT_ACCESS_TOKEN, JWT_REFRESH_TOKEN } from "config"
 import authorization from "~/middlewares/authorization"
 import { getAvatar, uploadAvatar } from "./user.service"
 import { RoleMiddleWare } from "~/middlewares"
@@ -49,19 +49,19 @@ userController
             status: "Unauthorized",
           }
         }
-        const bank = await prisma.banks.findUnique({
-          where: {
-            author_id: id,
-          },
-        })
-        if (!bank) {
-          set.status = 404
-          return {
-            status: "Not Found",
-          }
-        }
+        // const bank = await prisma.banks.findUnique({
+        //   where: {
+        //     author_id: id,
+        //   },
+        // })
+        // if (!bank) {
+        //   set.status = 404
+        //   return {
+        //     status: "Not Found",
+        //   }
+        // }
         return {
-          ...bank,
+          // ...bank,
         }
       } catch (error) {
         console.log("🚀 ~ file: user.controller.ts:45 ~ .get ~ error:", error)
@@ -90,7 +90,7 @@ userController
           acqId,
           account_name,
         }
-        await prisma.banks.create({ data: bank })
+        // await prisma.banks.create({ data: bank })
         set.status = 201
         return {
           status: "Created",

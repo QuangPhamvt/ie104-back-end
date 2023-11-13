@@ -1,4 +1,3 @@
-import { prisma } from "config"
 import Elysia, { t } from "elysia"
 import { AuthorizationMiddleWare, RoleMiddleWare } from "~/middlewares"
 import { getObject, upload } from "../../../aws/s3"
@@ -47,22 +46,22 @@ productController
     async ({ query }) => {
       const { limit = 5, page = 1 } = query
       const skip = limit && page ? +limit * (+page - 1) : 5
-      const products = await prisma.products.findMany({
-        skip,
-        take: !!limit ? +limit : 5,
-      })
-      const data = await Promise.all(
-        products.map(async (product) => {
-          if (!product.picture) return null
-          const picture = await getObject(product.picture)
-          return {
-            ...product,
-            picture,
-          }
-        }),
-      )
+      // const products = await prisma.products.findMany({
+      //   skip,
+      //   take: !!limit ? +limit : 5,
+      // })
+      // const data = await Promise.all(
+      //   products.map(async (product) => {
+      //     if (!product.picture) return null
+      //     const picture = await getObject(product.picture)
+      //     return {
+      //       ...product,
+      //       picture,
+      //     }
+      //   }),
+      // )
       return {
-        data,
+        // data,
       }
     },
     {
@@ -95,22 +94,22 @@ productController
       console.log("🚀 ------------------------------------------------------🚀")
       console.log("🚀 ~ file: product.controller.ts:81 ~ product:", product)
       console.log("🚀 ------------------------------------------------------🚀")
-      const newProduct = await prisma.products.create({
-        data: {
-          ...product,
-          picture: null,
-        },
-      })
-      await prisma.products.update({
-        where: {
-          id: newProduct.id,
-        },
-        data: {
-          picture: `product/${newProduct.id}/picture.webp`,
-        },
-      })
+      // const newProduct = await prisma.products.create({
+      //   data: {
+      //     ...product,
+      //     picture: null,
+      //   },
+      // })
+      // await prisma.products.update({
+      //   where: {
+      //     id: newProduct.id,
+      //   },
+      //   data: {
+      //     picture: `product/${newProduct.id}/picture.webp`,
+      //   },
+      // })
       const blob = new Blob([body.picture], { type: "image" }) || ""
-      await upload(`product/${newProduct.id}/picture.webp`, blob, "image/webp")
+      // await upload(`product/${newProduct.id}/picture.webp`, blob, "image/webp")
       return request.headers.get("role")
     },
     {
