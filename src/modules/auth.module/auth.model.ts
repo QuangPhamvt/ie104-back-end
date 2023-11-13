@@ -1,18 +1,18 @@
 import Elysia, { t } from "elysia"
 enum ROLE {
-  BUYER = "Buyer",
-  SELLER = "Seller",
+  BUYER = "buyer",
+  SELLER = "seller",
 }
 export const signInDto = t.Object({
-  email: t.String({ format: "email", default: "seller@example.com" }),
+  email: t.String({ format: "email", default: "buyer@example.com" }),
   password: t.String({ description: "This is password", default: "123456" }),
 })
 
 export const signUpDto = t.Object({
-  email: t.String({ format: "email", default: "seller@example.com" }),
+  email: t.String({ format: "email", default: "buyer@example.com" }),
   password: t.String({ description: "This is password", default: "123456" }),
-  username: t.String({ default: "seller" }),
-  role: t.Enum(ROLE, { default: "Seller" }),
+  username: t.String({ default: "buyer" }),
+  role: t.Enum(ROLE, { default: "buyer" }),
 })
 export const refreshTokenDto = t.Object({
   refresh_token: t.String(),

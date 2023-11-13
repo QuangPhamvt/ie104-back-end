@@ -1,15 +1,14 @@
-import { prisma } from "config"
 import { getObject, upload } from "../../../aws/s3"
 
 export const getAvatar = async (request: Request, set: any) => {
   try {
     const id = request.headers.get("userId") || ""
-    const user = await prisma.users.findUnique({
-      where: {
-        id,
-      },
-    })
-    if (user) return await getObject(user.avatar)
+    // const user = await prisma.users.findUnique({
+    //   where: {
+    //     id,
+    //   },
+    // })
+    // if (user) return await getObject(user.avatar)
     set.status = 400
     return {
       status: "Bad request",
@@ -29,14 +28,14 @@ export const uploadAvatar = async ({ request, body, set }: { request: Request; b
   const blob = new Blob([body.file], { type: "image" }) || ""
   const avatarUrl = `user/${id}/avatar.webp`
   try {
-    await prisma.users.update({
-      where: {
-        id,
-      },
-      data: {
-        avatar: avatarUrl,
-      },
-    })
+    // await prisma.users.update({
+    //   where: {
+    //     id,
+    //   },
+    //   data: {
+    //     avatar: avatarUrl,
+    //   },
+    // })
     await upload(`user/${id}/avatar.webp`, blob, "image/webp")
     set.status = "Created"
     return {

@@ -1,4 +1,3 @@
-import { prisma } from "config"
 import Elysia, { t } from "elysia"
 import { AuthorizationMiddleWare } from "~/middlewares"
 import { getObject } from "../../../aws/s3"
@@ -14,56 +13,56 @@ cartController
     async ({ request }) => {
       const id = request.headers.get("userId") || ""
       try {
-        const carts = await prisma.carts.findMany({
-          where: {
-            author_id: id,
-          },
-          select: {
-            id: true,
-            status: true,
-            cart_items: {
-              select: {
-                price: true,
-                quantity: true,
-                create_at: true,
-                product: {
-                  select: {
-                    title: true,
-                    picture: true,
-                    price: true,
-                    discount: true,
-                    author_id: false,
-                  },
-                },
-              },
-            },
-          },
-        })
-        const newCarts = await Promise.all(
-          carts.map(async (cart) => {
-            const newCart = await Promise.all(
-              cart.cart_items.map(async (cart_item) => {
-                const picture = await getObject(cart_item.product.picture || "")
-                return {
-                  ...cart_item,
-                  product: {
-                    ...cart_item.product,
-                    picture,
-                  },
-                }
-              }),
-            )
-            return {
-              ...cart,
-              newCart,
-            }
-          }),
-        )
+        // const carts = await prisma.carts.findMany({
+        //   where: {
+        //     author_id: id,
+        //   },
+        //   select: {
+        //     id: true,
+        //     status: true,
+        //     cart_items: {
+        //       select: {
+        //         price: true,
+        //         quantity: true,
+        //         create_at: true,
+        //         product: {
+        //           select: {
+        //             title: true,
+        //             picture: true,
+        //             price: true,
+        //             discount: true,
+        //             author_id: false,
+        //           },
+        //         },
+        //       },
+        //     },
+        //   },
+        // })
+        // const newCarts = await Promise.all(
+        //   carts.map(async (cart) => {
+        //     const newCart = await Promise.all(
+        //       cart.cart_items.map(async (cart_item) => {
+        //         const picture = await getObject(cart_item.product.picture || "")
+        //         return {
+        //           ...cart_item,
+        //           product: {
+        //             ...cart_item.product,
+        //             picture,
+        //           },
+        //         }
+        //       }),
+        //     )
+        //     return {
+        //       ...cart,
+        //       newCart,
+        //     }
+        //   }),
+        // )
         return {
-          status: "Ok",
-          data: {
-            carts: newCarts,
-          },
+          // status: "Ok",
+          // data: {
+          //   carts: newCarts,
+          // },
         }
       } catch (error) {
         console.log(error)
@@ -81,18 +80,18 @@ cartController
     async ({ request, body }) => {
       const id = request.headers.get("userId") || ""
       try {
-        await prisma.carts.create({
-          data: {
-            author_id: id,
-            cart_items: {
-              create: body.cart.map((cart) => {
-                return {
-                  ...cart,
-                }
-              }),
-            },
-          },
-        })
+        // await prisma.carts.create({
+        //   data: {
+        //     author_id: id,
+        //     cart_items: {
+        //       create: body.cart.map((cart) => {
+        //         return {
+        //           ...cart,
+        //         }
+        //       }),
+        //     },
+        //   },
+        // })
       } catch (error) {
         console.log("🚀 -----------------------------------------------🚀")
         console.log("🚀 ~ file: cart.controller.ts:22 ~ error:", error)

@@ -7,6 +7,10 @@
     "format": "bun run prettier src/**/*.ts --check",
     "format:fix": "bun run prettier src/**/*.ts --write",
     "build:server": "bun build src/index.ts --compile --outfile build/server",
+    "db:generate": "bunx drizzle-kit generate:mysql",
+    "db:pull": "bunx drizzle-kit introspect:mysql",
+    "db:push": "bunx drizzle-kit push:mysql",
+    "db:studio": "bunx drizzle-kit studio --port 4000",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -16,17 +20,18 @@
     "@elysiajs/bearer": "^0.7.0",
     "@elysiajs/jwt": "^0.7.0",
     "@elysiajs/swagger": "^0.7.3",
-    "@prisma/client": "latest",
-    "elysia": "latest"
+    "drizzle-orm": "^0.29.0",
+    "elysia": "latest",
+    "mysql2": "^3.6.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.7.2",
     "@commitlint/config-conventional": "^17.7.0",
     "bun-types": "latest",
+    "drizzle-kit": "^0.20.2",
     "husky": "^8.0.0",
     "lint-staged": "^14.0.1",
-    "prettier": "^3.0.3",
-    "prisma": "latest"
+    "prettier": "^3.0.3"
   },
   "husky": {
     "pre-commit": "lint-staged"

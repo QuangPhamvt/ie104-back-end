@@ -62,7 +62,7 @@ jobs:
       - name: Build bunx
         run: |
           echo "Bun is Building"
-          bunx prisma db pull
-          bunx prisma generate deploy
+          bun db:pull
+          bun db:generate
           bun build:server
           pm2 restart "ie104-back-end"
