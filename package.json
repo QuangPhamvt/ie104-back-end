@@ -18,6 +18,7 @@
     "@aws-sdk/lib-storage": "^3.427.0",
     "@aws-sdk/s3-request-presigner": "^3.427.0",
     "@elysiajs/bearer": "^0.7.0",
+    "@elysiajs/cors": "^0.7.1",
     "@elysiajs/jwt": "^0.7.0",
     "@elysiajs/swagger": "^0.7.3",
     "drizzle-orm": "^0.29.0",

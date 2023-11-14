@@ -1,6 +1,7 @@
 import { Elysia } from "elysia"
 import modules from "./modules"
 import config from "config"
+import cors from "@elysiajs/cors"
 
 const app = new Elysia({ prefix: "/api/v1" })
   .use(config.Document)
@@ -14,6 +15,11 @@ const app = new Elysia({ prefix: "/api/v1" })
   .onParse(({ request }, contentType) => {
     if (contentType === "image/jpeg") return request.text()
   })
+  .use(
+    cors({
+      allowedHeaders: "*",
+    }),
+  )
   .use(modules)
   .listen(Bun.env.SERVER_PORT || 3000)
 
