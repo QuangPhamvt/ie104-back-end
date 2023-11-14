@@ -1,5 +1,5 @@
 import { like, or } from "drizzle-orm"
-import db, { users } from "~/database/schema"
+import db, { banks, users } from "~/database/schema"
 
 interface authServiceDto {
   set: any
@@ -15,10 +15,12 @@ interface signInDto extends Partial<authServiceDto> {
 }
 interface signUpDto extends Partial<authServiceDto> {
   body: {
-    email: string
-    password: string
-    username: string
-    role: "buyer" | "seller"
+    email?: string
+    password?: string
+    username?: string
+    role?: "buyer" | "seller"
+    arqId?: string
+    accountNo?: string
   }
 }
 interface refreshTokenDto extends Partial<authServiceDto> {
@@ -82,8 +84,15 @@ export const signUp = async (context: signUpDto) => {
     set,
     JWT_ACCESS_TOKEN,
     JWT_REFRESH_TOKEN,
-    body: { email, username, password, role },
+    body: { email, username, password, role, arqId, accountNo },
   } = context
+  if (!email || !username) {
+    set.status = 400
+    return {
+      message: "Not have username or email",
+    }
+  }
+
   const [user] = await db
     .select()
     .from(users)
@@ -91,15 +100,13 @@ export const signUp = async (context: signUpDto) => {
   if (user) {
     set.status = "Bad Request"
     return {
-      status: "Bad Request",
       message: "email or name is exist!",
     }
   }
   if (!password) {
     set.status = 400
     return {
-      status: "Bad Request",
-      message: "Not have password!",
+      message: "Bad Request",
     }
   }
   // HASH Password
@@ -107,8 +114,10 @@ export const signUp = async (context: signUpDto) => {
     algorithm: "bcrypt",
     cost: 4,
   })
+  // INSERT USER
   await db.insert(users).values({ email, username, password: hashPassword, role })
   const [newUser] = await db.select().from(users).where(like(users.email, email))
+  // CREATE TOKEN
   const access_token = await JWT_ACCESS_TOKEN.sign({
     id: newUser.id,
     email: newUser.email,
@@ -121,9 +130,48 @@ export const signUp = async (context: signUpDto) => {
     username: newUser.username,
     role: newUser.role,
   })
+
+  let response
+  if (role === "seller") {
+    if (!arqId || !accountNo) {
+      set.status = 400
+      return {
+        message: "Not have bin or account",
+      }
+    }
+    response = await fetch("https://api.vietqr.io/v2/lookup", {
+      method: "POST",
+      headers: {
+        "x-client-id": process.env.CLIENT_ID || "",
+        "x-api-key": process.env.API_KEY || "",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        bin: arqId && +arqId,
+        accountNumber: accountNo && +accountNo,
+      }),
+    })
+    response = await response.json()
+
+    if (response.code === "00") {
+      await db.insert(banks).values({
+        author_id: newUser.id,
+        acqId: arqId,
+        account_name: response.data.accountName,
+        account_no: accountNo,
+      })
+    }
+    if (response.code !== "00") {
+      await db.delete(users).where(like(users.email, email))
+      set.status = 400
+      return {
+        message: "Wrong bank detail",
+      }
+    }
+  }
   set.status = "Created"
   return {
-    status: "Created",
+    message: "Created",
     access_token,
     refresh_token,
   }
