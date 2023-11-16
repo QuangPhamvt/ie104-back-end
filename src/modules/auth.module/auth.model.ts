@@ -23,12 +23,12 @@ export const signUpDto = t.Partial(
     password: t.String({ description: "This is password", default: "123456" }),
     username: t.String({ default: "buyer" }),
     role: t.Enum(ROLE, { default: "buyer" }),
-    arqId: t.String(),
+    acqId: t.String(),
     accountNo: t.String(),
     accountName: t.String(),
   }),
 )
-export const signUpResponse = t.Partial(
+export const signUpResponseDto = t.Partial(
   t.Object({
     message: t.String(),
     data: t.Object({
@@ -86,7 +86,7 @@ const authModel = new Elysia().model({
   signInResponse: signInResponseDto,
 
   signUp: signUpDto,
-  signUpResponse: signInResponseDto,
+  signUpResponse: signUpResponseDto,
 
   refreshToken: refreshTokenDto,
   refreshTokenResponse: refreshTokenResponseDto,

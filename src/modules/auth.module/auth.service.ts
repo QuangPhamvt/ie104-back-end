@@ -21,7 +21,7 @@ interface signUpDto extends Partial<authServiceDto> {
     password?: string
     username?: string
     role?: "buyer" | "seller"
-    arqId?: string
+    acqId?: string
     accountNo?: string
     accountName?: string
   }
@@ -92,7 +92,7 @@ export const signUp = async (context: signUpDto) => {
     set,
     JWT_ACCESS_TOKEN,
     JWT_REFRESH_TOKEN,
-    body: { email, username, password, role, arqId, accountNo, accountName },
+    body: { email, username, password, role, acqId, accountNo, accountName },
   } = context
   if (!email || !username) {
     set.status = 400
@@ -140,7 +140,7 @@ export const signUp = async (context: signUpDto) => {
   })
 
   if (role === "seller") {
-    if (!arqId || !accountNo || !accountName) {
+    if (!acqId || !accountNo || !accountName) {
       set.status = 400
       return {
         message: "Not have bin or account",
@@ -148,7 +148,7 @@ export const signUp = async (context: signUpDto) => {
     }
     await db.insert(banks).values({
       author_id: newUser.id,
-      acqId: arqId,
+      acqId: acqId,
       account_name: accountName,
       account_no: accountNo,
     })
