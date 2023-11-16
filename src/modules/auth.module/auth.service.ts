@@ -1,5 +1,7 @@
+import { SetElysia } from "config"
 import { like, or } from "drizzle-orm"
 import db, { banks, users } from "~/database/schema"
+import { ARQ_ID } from "~/utilities"
 
 interface authServiceDto {
   set: any
@@ -21,6 +23,7 @@ interface signUpDto extends Partial<authServiceDto> {
     role?: "buyer" | "seller"
     arqId?: string
     accountNo?: string
+    accountName?: string
   }
 }
 interface refreshTokenDto extends Partial<authServiceDto> {
@@ -31,6 +34,11 @@ interface refreshTokenDto extends Partial<authServiceDto> {
 
 interface profileDto extends Partial<authServiceDto> {
   request: Request
+}
+interface checkAccountDto {
+  set: SetElysia
+  acqId: string
+  accountNo: string
 }
 //SIGN IN
 export const signIn = async (context: signInDto) => {
@@ -45,7 +53,6 @@ export const signIn = async (context: signInDto) => {
   if (!user) {
     set.status = 400
     return {
-      status: "Bad Request",
       message: "email or password is wrong!",
     }
   }
@@ -54,7 +61,6 @@ export const signIn = async (context: signInDto) => {
   if (!verifyPassword) {
     set.status = 400
     return {
-      status: "Bad Request",
       message: "email or password is wrong!",
     }
   }
@@ -72,9 +78,11 @@ export const signIn = async (context: signInDto) => {
   })
   set.status = "Created"
   return {
-    status: "Created",
-    access_token,
-    refresh_token,
+    message: "Created",
+    data: {
+      access_token,
+      refresh_token,
+    },
   }
 }
 
@@ -84,7 +92,7 @@ export const signUp = async (context: signUpDto) => {
     set,
     JWT_ACCESS_TOKEN,
     JWT_REFRESH_TOKEN,
-    body: { email, username, password, role, arqId, accountNo },
+    body: { email, username, password, role, arqId, accountNo, accountName },
   } = context
   if (!email || !username) {
     set.status = 400
@@ -131,49 +139,27 @@ export const signUp = async (context: signUpDto) => {
     role: newUser.role,
   })
 
-  let response
   if (role === "seller") {
-    if (!arqId || !accountNo) {
+    if (!arqId || !accountNo || !accountName) {
       set.status = 400
       return {
         message: "Not have bin or account",
       }
     }
-    response = await fetch("https://api.vietqr.io/v2/lookup", {
-      method: "POST",
-      headers: {
-        "x-client-id": process.env.CLIENT_ID || "",
-        "x-api-key": process.env.API_KEY || "",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        bin: arqId && +arqId,
-        accountNumber: accountNo && +accountNo,
-      }),
+    await db.insert(banks).values({
+      author_id: newUser.id,
+      acqId: arqId,
+      account_name: accountName,
+      account_no: accountNo,
     })
-    response = await response.json()
-
-    if (response.code === "00") {
-      await db.insert(banks).values({
-        author_id: newUser.id,
-        acqId: arqId,
-        account_name: response.data.accountName,
-        account_no: accountNo,
-      })
-    }
-    if (response.code !== "00") {
-      await db.delete(users).where(like(users.email, email))
-      set.status = 400
-      return {
-        message: "Wrong bank detail",
-      }
-    }
   }
   set.status = "Created"
   return {
     message: "Created",
-    access_token,
-    refresh_token,
+    data: {
+      access_token,
+      refresh_token,
+    },
   }
 }
 
@@ -184,7 +170,6 @@ export const refreshToken = async (context: refreshTokenDto) => {
   if (!id || !role || !username || !email) {
     set.status = "Unauthorized"
     return {
-      status: "Unauthorized",
       message: "Refresh Token is wrong",
     }
   }
@@ -193,28 +178,88 @@ export const refreshToken = async (context: refreshTokenDto) => {
   const refresh_token = await JWT_REFRESH_TOKEN.sign({ id, email, username, role })
   return {
     message: "Created",
-    access_token,
-    refresh_token,
+    data: {
+      access_token,
+      refresh_token,
+    },
   }
 }
 
 //PROFILE
 export const profile = async (context: profileDto) => {
+  let detailBank
   try {
     const { request } = context
     const id = request.headers.get("userId") || ""
     const [user] = await db.select().from(users).where(like(users.id, id))
+    if (user.role === "seller") {
+      detailBank = await db.select().from(banks).where(like(banks.author_id, user.id))
+      return {
+        message: "Ok",
+        data: {
+          user: {
+            email: user.email || "",
+            name: user.username || "",
+            role: user.role || "seller",
+          },
+          bank: {
+            ...detailBank[0],
+          },
+        },
+      }
+    }
     return {
-      status: "OK",
+      message: "OK",
       data: {
         user: {
-          email: user?.email,
-          name: user?.username,
-          role: user?.role,
+          email: user.email || "",
+          name: user.username || "",
+          role: user.role || "",
         },
       },
     }
   } catch (error) {
     console.log(error)
+    return {
+      message: "Internal Server Error",
+    }
+  }
+}
+
+// CHECK BANK ACCOUNT
+export const checkAccount = async <TContext extends checkAccountDto>(context: TContext) => {
+  const { set, acqId, accountNo } = context
+  try {
+    let response: any = await fetch("https://api.vietqr.io/v2/lookup", {
+      method: "POST",
+      headers: {
+        "x-client-id": process.env.CLIENT_ID || "",
+        "x-api-key": process.env.API_KEY || "",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        bin: +acqId,
+        accountNumber: +accountNo,
+      }),
+    })
+    response = await response.json()
+    if (response?.code !== "00") {
+      set.status = 400
+      return {
+        message: "Something wrong with account",
+      }
+    }
+    return {
+      message: "Ok",
+      data: {
+        ...response.data,
+        ...ARQ_ID[acqId],
+      },
+    }
+  } catch (error) {
+    set.status = 500
+    return {
+      message: "Internal Server Error",
+    }
   }
 }

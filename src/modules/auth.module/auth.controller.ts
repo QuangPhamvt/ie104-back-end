@@ -1,7 +1,7 @@
 import Elysia, { t } from "elysia"
 import { JWT_ACCESS_TOKEN, JWT_REFRESH_TOKEN } from "config"
 import authModel from "~/modules/auth.module/auth.model"
-import { profile, refreshToken, signIn, signUp } from "./auth.service"
+import { checkAccount, profile, refreshToken, signIn, signUp } from "./auth.service"
 import authorization from "~/middlewares/authorization"
 
 const authController = new Elysia()
@@ -22,12 +22,9 @@ authController
     },
     {
       body: "signIn",
-      ...DETAIL,
-      error() {
-        return {
-          status: "Bad Request",
-          message: "Something wrong with email",
-        }
+      response: "signInResponse",
+      detail: {
+        tags: ["AUTH"],
       },
     },
   )
@@ -39,6 +36,22 @@ authController
     },
     {
       body: "signUp",
+      response: "signUpResponse",
+      ...DETAIL,
+    },
+  )
+  .post(
+    "/check-account",
+    (context) => {
+      const {
+        set,
+        body: { acqId, accountNo },
+      } = context
+      return checkAccount({ set, acqId, accountNo })
+    },
+    {
+      body: "checkAccount",
+      response: "checkAccountResponse",
       ...DETAIL,
     },
   )
@@ -50,6 +63,7 @@ authController
     },
     {
       body: "refreshToken",
+      response: "refreshTokenResponse",
       ...DETAIL,
     },
   )

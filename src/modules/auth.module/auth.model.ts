@@ -8,6 +8,15 @@ export const signInDto = t.Object({
   password: t.String({ description: "This is password", default: "123456" }),
 })
 
+export const signInResponseDto = t.Partial(
+  t.Object({
+    message: t.String(),
+    data: t.Object({
+      access_token: t.String(),
+      refresh_token: t.String(),
+    }),
+  }),
+)
 export const signUpDto = t.Partial(
   t.Object({
     email: t.String({ format: "email", default: "buyer@example.com" }),
@@ -16,15 +25,75 @@ export const signUpDto = t.Partial(
     role: t.Enum(ROLE, { default: "buyer" }),
     arqId: t.String(),
     accountNo: t.String(),
+    accountName: t.String(),
+  }),
+)
+export const signUpResponse = t.Partial(
+  t.Object({
+    message: t.String(),
+    data: t.Object({
+      access_token: t.String(),
+      refresh_token: t.String(),
+    }),
   }),
 )
 export const refreshTokenDto = t.Object({
   refresh_token: t.String(),
 })
-
+export const refreshTokenResponseDto = t.Partial(
+  t.Object({
+    message: t.String(),
+    data: t.Object({
+      access_token: t.String(),
+      refresh_token: t.String(),
+    }),
+  }),
+)
+export const checkAccountDto = t.Object({
+  acqId: t.String({ default: "970415" }),
+  accountNo: t.String({ default: "113366668888" }),
+})
+export const checkAccountResponseDto = t.Partial(
+  t.Object({
+    message: t.String(),
+    data: t.Object({
+      accountName: t.String(),
+      name: t.String(),
+      shortName: t.String(),
+      logo: t.String(),
+    }),
+  }),
+)
+export const profileResponseDto = t.Object({
+  message: t.String(),
+  data: t.Object({
+    user: t.Object({
+      email: t.String(),
+      name: t.String(),
+      role: t.Enum(ROLE),
+    }),
+    bank: t.Object({
+      id: t.String(),
+      author_id: t.String(),
+      acqId: t.String(),
+      account_name: t.String(),
+      account_no: t.String(),
+    }),
+  }),
+})
 const authModel = new Elysia().model({
   signIn: signInDto,
+  signInResponse: signInResponseDto,
+
   signUp: signUpDto,
+  signUpResponse: signInResponseDto,
+
   refreshToken: refreshTokenDto,
+  refreshTokenResponse: refreshTokenResponseDto,
+
+  checkAccount: checkAccountDto,
+  checkAccountResponse: checkAccountResponseDto,
+
+  profileResponse: profileResponseDto,
 })
 export default authModel
