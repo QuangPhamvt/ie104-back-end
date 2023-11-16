@@ -6,10 +6,10 @@ export const banks = mysqlTable("banks", {
   id: varchar("id", { length: 12 })
     .primaryKey()
     .default(sql`(uuid())`),
-  author_id: varchar("author_id", { length: 12 }),
-  acqId: varchar("acqId", { length: 255 }),
-  account_name: varchar("account_name", { length: 255 }),
-  account_no: varchar("account_no", { length: 255 }),
+  author_id: varchar("author_id", { length: 12 }).notNull(),
+  acqId: varchar("acqId", { length: 255 }).notNull(),
+  account_name: varchar("account_name", { length: 255 }).notNull(),
+  account_no: varchar("account_no", { length: 255 }).notNull(),
 })
 export const banksRelations = relations(banks, ({ one }) => ({
   author: one(users, {
