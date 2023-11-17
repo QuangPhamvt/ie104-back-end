@@ -5,24 +5,10 @@ import cors from "@elysiajs/cors"
 
 const app = new Elysia({ prefix: "/api/v1" })
   .use(config.Document)
-  .get(
-    "/",
-    () => {
-      return "Hello this is ie104"
-    },
-    { detail: { tags: ["App"] } },
-  )
-  .onParse(({ request }, contentType) => {
-    if (contentType === "image/jpeg") return request.text()
-  })
-  .use(
-    cors({
-      origin: ["http://fe.ie104.customafk.com", "http://ie104.customafk.com"],
-      allowedHeaders: ["Origin, X-Requested-With, Content-Type, Accept, Authorization", "*"],
-      methods: "*",
-      credentials: true,
-    }),
-  )
+  // .onParse(({ request }, contentType) => {
+  //   if (contentType === "image/jpeg") return request.text()
+  // })
+  .use(cors())
   .use(modules)
   .listen(Bun.env.SERVER_PORT || 3000)
 
