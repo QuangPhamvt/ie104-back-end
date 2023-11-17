@@ -17,7 +17,10 @@ const app = new Elysia({ prefix: "/api/v1" })
   })
   .use(
     cors({
+      origin: true,
       allowedHeaders: "*",
+      methods: "*",
+      credentials: false,
     }),
   )
   .use(modules)
