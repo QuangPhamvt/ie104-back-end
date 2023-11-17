@@ -18,9 +18,9 @@ const app = new Elysia({ prefix: "/api/v1" })
   .use(
     cors({
       origin: true,
-      allowedHeaders: ["*", "http://fe.ie104.customafk.com"],
+      allowedHeaders: ["Origin, X-Requested-With, Content-Type, Accept, Authorization", "*"],
       methods: "*",
-      credentials: false,
+      credentials: true,
     }),
   )
   .use(modules)
