@@ -10,6 +10,6 @@ const app = new Elysia({ prefix: "/api/v1" })
   // })
   .use(cors())
   .use(modules)
-  .listen(Bun.env.SERVER_PORT || 3000)
+  .listen(process.env.SERVER_PORT || 3000)
 
 console.log(`🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}/api/v1/document`)
