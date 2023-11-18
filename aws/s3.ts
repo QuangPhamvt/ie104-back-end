@@ -9,7 +9,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
 export const getObject = async (key: string) => {
   const input = {
-    Bucket: Bun.env.AWS_BUCKET_NAME || "",
+    Bucket: process.env.AWS_BUCKET_NAME || "",
     Key: key,
   }
   const command = new GetObjectCommand(input)
@@ -25,7 +25,7 @@ export const putObject = async (
   body: StreamingBlobPayloadInputTypes | BrowserRuntimeStreamingBlobPayloadInputTypes,
 ) => {
   const input: PutObjectCommandInput = {
-    Bucket: Bun.env.AWS_BUCKET_NAME || "",
+    Bucket: process.env.AWS_BUCKET_NAME || "",
     Key: key,
     Body: body,
   }
@@ -37,7 +37,7 @@ export const upload = async (key: string, body: StreamingBlobPayloadInputTypes, 
     const parallelUploads3 = new Upload({
       client,
       params: {
-        Bucket: Bun.env.AWS_BUCKET_NAME,
+        Bucket: process.env.AWS_BUCKET_NAME,
         Key: key,
         Body: body,
         ContentType: contentType,
