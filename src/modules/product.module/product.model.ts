@@ -4,7 +4,8 @@ import { IMAGE } from "~/utilities"
 const DEFAULT_CREATE_PRODUCT_BODY = {
   title: "Pho",
   description: "Phở Nhà làm",
-  pricture: IMAGE,
+  location: "Thành phố Hồ Chí Minh",
+  picture: IMAGE,
   price: 300,
   categories_id: "bfe0dab6-85c6-11ee-9ea3-063ae024",
 }
@@ -24,7 +25,8 @@ const getCategoriesResponseDto = t.Object({
 const createProductBodyDto = t.Object({
   title: t.String({ default: DEFAULT_CREATE_PRODUCT_BODY.title }),
   description: t.String({ default: DEFAULT_CREATE_PRODUCT_BODY.description }),
-  picture: t.String({ contentEncoding: "base64", default: DEFAULT_CREATE_PRODUCT_BODY.pricture }),
+  location: t.String({ default: DEFAULT_CREATE_PRODUCT_BODY.location }),
+  picture: t.String({ contentEncoding: "base64", default: DEFAULT_CREATE_PRODUCT_BODY.picture }),
   price: t.Number({ default: DEFAULT_CREATE_PRODUCT_BODY.price }),
   categories_id: t.String({ default: DEFAULT_CREATE_PRODUCT_BODY.categories_id }),
 })
