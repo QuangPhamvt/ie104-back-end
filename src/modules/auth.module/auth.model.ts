@@ -4,7 +4,7 @@ enum ROLE {
   SELLER = "seller",
 }
 export const signInDto = t.Object({
-  email: t.String({ format: "email", default: "buyer@example.com" }),
+  email: t.String({ format: "email", default: "seller@example.com" }),
   password: t.String({ description: "This is password", default: "123456" }),
 })
 
@@ -23,9 +23,9 @@ export const signUpDto = t.Partial(
     password: t.String({ description: "This is password", default: "123456" }),
     username: t.String({ default: "buyer" }),
     role: t.Enum(ROLE, { default: "buyer" }),
-    acqId: t.String(),
-    accountNo: t.String(),
-    accountName: t.String(),
+    acqId: t.String({ description: "Link to get acqId bank: https://api.vietqr.io/v2/banks", default: "970436" }),
+    accountNo: t.String({ default: "1025871607" }),
+    accountName: t.String({ default: "Pham Minh Quang" }),
   }),
 )
 export const signUpResponseDto = t.Partial(
