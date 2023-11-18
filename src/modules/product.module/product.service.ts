@@ -10,6 +10,7 @@ type createProductDto = {
   body: {
     title: string
     description: string
+    location: string
     picture: string
     price: number
     categories_id: string
@@ -42,7 +43,7 @@ const productService = {
     const {
       headers,
       set,
-      body: { title, description, picture, price, categories_id },
+      body: { title, description, picture, price, categories_id, location },
     } = props
     const id = headers.get("userId") || ""
     const role = headers.get("role") || ""
@@ -54,7 +55,9 @@ const productService = {
     }
     try {
       const slug = toSlug(title)
-      await db.insert(products).values({ title, slug, description, picture: null, price, categories_id, author_id: id })
+      await db
+        .insert(products)
+        .values({ title, slug, description, location, picture: null, price, categories_id, author_id: id })
       const [product] = await db
         .select()
         .from(products)
