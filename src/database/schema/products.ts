@@ -1,18 +1,20 @@
 import { relations, sql } from "drizzle-orm"
-import { mysqlTable, text, varchar } from "drizzle-orm/mysql-core"
+import { datetime, int, mysqlTable, text, varchar } from "drizzle-orm/mysql-core"
 import { categories } from "./categories"
 import { users } from "./users"
 
 export const products = mysqlTable("products", {
-  id: varchar("id", { length: 12 })
+  id: varchar("id", { length: 32 })
     .primaryKey()
     .default(sql`(uuid())`),
-  author_id: varchar("author_id", { length: 12 }),
+  author_id: varchar("author_id", { length: 32 }),
   title: varchar("title", { length: 255 }),
-  slug: varchar("title", { length: 255 }),
+  slug: varchar("slug", { length: 255 }),
   description: text("description"),
   picture: varchar("picture", { length: 255 }),
-  categories_id: varchar("categories_id", { length: 12 }),
+  price: int("price", {}),
+  create_at: datetime("create_at").default(sql`CURRENT_TIMESTAMP`),
+  categories_id: varchar("categories_id", { length: 32 }),
 })
 
 export const productsRelations = relations(products, ({ one }) => ({
