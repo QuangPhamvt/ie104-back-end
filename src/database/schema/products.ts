@@ -12,6 +12,7 @@ export const products = mysqlTable("products", {
   slug: varchar("slug", { length: 255 }),
   description: text("description"),
   location: varchar("location", { length: 32 }),
+  slug_location: varchar("slug_location", { length: 32 }),
   picture: varchar("picture", { length: 255 }),
   price: int("price", {}),
   create_at: datetime("create_at").default(sql`CURRENT_TIMESTAMP`),

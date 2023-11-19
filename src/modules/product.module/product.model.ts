@@ -10,9 +10,65 @@ const DEFAULT_CREATE_PRODUCT_BODY = {
   categories_id: "bfe0dab6-85c6-11ee-9ea3-063ae024",
 }
 const DEFAULT_CREATE_CATEGORIES = {
-  name: "Bearkfirst",
+  name: "Breakfirst",
   description: "Good Morning",
 }
+const postSearchProductByIdBodyDto = t.Object({
+  id: t.String(),
+})
+const postSearchProductByIdResponseDto = t.Object({
+  message: t.String(),
+  data: t.Array(
+    t.Union([
+      t.Object({
+        id: t.String(),
+        title: t.String(),
+        picture: t.String(),
+        description: t.String(),
+        price: t.Number(),
+        location: t.String(),
+        create_at: t.String(),
+        author: t.Object({
+          author_id: t.String(),
+          username: t.String(),
+        }),
+        categories: t.Object({
+          categories_id: t.String(),
+          categories_name: t.String(),
+        }),
+      }),
+      t.Object({}),
+    ]),
+  ),
+})
+const postSearchProductBodyDto = t.Partial(
+  t.Object({
+    slug: t.String({ default: "pho" }),
+    location: t.String({ default: "Hồ cHÍ minh" }),
+    limit: t.Number({ default: 6 }),
+    page: t.Number({ default: 1 }),
+  }),
+)
+const postSearchProductResponseDto = t.Object({
+  message: t.String(),
+  data: t.Array(
+    t.Union([
+      t.Object({
+        id: t.String({ format: "uuid" }),
+        title: t.String(),
+        picture: t.String(),
+        location: t.String(),
+        price: t.Number(),
+        author: t.Object({
+          author_id: t.String(),
+          username: t.String(),
+        }),
+      }),
+      t.Object({}),
+    ]),
+  ),
+})
+
 const getCategoriesResponseDto = t.Object({
   message: t.String(),
   data: t.Array(
@@ -41,9 +97,17 @@ const createCategoriesResponseDto = t.Object({
   message: t.String(),
 })
 export const productModel = new Elysia().model({
+  postSearchProductByIdBody: postSearchProductByIdBodyDto,
+  postSearchProductByIdResponse: postSearchProductByIdResponseDto,
+
+  postSearchProductBody: postSearchProductBodyDto,
+  postSearchProductResponse: postSearchProductResponseDto,
+
   getCategoriesResponse: getCategoriesResponseDto,
+
   createProductBody: createProductBodyDto,
   createProductResponse: createProductResponse,
+
   createCategoriesBody: createCategoriesBodyDto,
   createCategoriesResponse: createCategoriesResponseDto,
 })
