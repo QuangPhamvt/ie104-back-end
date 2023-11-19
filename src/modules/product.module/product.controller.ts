@@ -1,42 +1,32 @@
 import Elysia, { t } from "elysia"
 import { AuthorizationMiddleWare, RoleMiddleWare } from "~/middlewares"
-import { getObject, upload } from "../../../aws/s3"
 import { productModel } from "./product.model"
-import productService from "./product.service"
+import productService from "./service"
 const productController = new Elysia()
 
 productController
   .use(productModel)
-  .get(
-    "",
-    async ({ query }) => {
-      const { limit = 5, page = 1 } = query
-      const skip = limit && page ? +limit * (+page - 1) : 5
-      // const products = await prisma.products.findMany({
-      //   skip,
-      //   take: !!limit ? +limit : 5,
-      // })
-      // const data = await Promise.all(
-      //   products.map(async (product) => {
-      //     if (!product.picture) return null
-      //     const picture = await getObject(product.picture)
-      //     return {
-      //       ...product,
-      //       picture,
-      //     }
-      //   }),
-      // )
-      return {
-        // data,
-      }
+  .post(
+    "/search-id",
+    ({ request: { headers }, body, set }) => {
+      return productService.postSearchProductById({ headers, body, set })
     },
     {
+      body: "postSearchProductByIdBody",
+      response: "postSearchProductByIdResponse",
+      detail: { tags: ["PRODUCT"] },
+    },
+  )
+  .post(
+    "/search",
+    ({ request: { headers }, body, set }) => {
+      return productService.postSearchProduct({ headers, body, set })
+    },
+    {
+      body: "postSearchProductBody",
+      response: "postSearchProductResponse",
       detail: {
         tags: ["PRODUCT"],
-        parameters: [
-          { in: "query", name: "page" },
-          { in: "query", name: "limit" },
-        ],
       },
     },
   )

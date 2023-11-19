@@ -19,7 +19,7 @@ export const getObject = async (key: string) => {
   return url
 }
 export const s3ObjectUrl = (url: string) =>
-  `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.awazonaws.com/` + url
+  `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/` + url
 export const putObject = async (
   key: string,
   body: StreamingBlobPayloadInputTypes | BrowserRuntimeStreamingBlobPayloadInputTypes,

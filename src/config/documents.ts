@@ -24,10 +24,10 @@ const document = swagger({
     tags: [
       { name: "App", description: "General Endpoint" },
       { name: "AUTH", description: "Authorization: /auth" },
+      { name: "PRODUCT", description: "Product information: /product" },
       { name: "USER", description: "User information: /user" },
       { name: "CART", description: "Cart information: /cart" },
       { name: "ORDER", description: "Order information: /oder" },
-      { name: "PRODUCT", description: "Product information: /product" },
     ],
     components: {
       securitySchemes: {
