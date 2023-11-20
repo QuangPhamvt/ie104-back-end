@@ -42,6 +42,19 @@ productController
       },
     },
   )
+  .post(
+    "/search-product/categories",
+    ({ request: { headers }, body, set }) => {
+      return productService.postFindProductByCategory({ headers, body, set })
+    },
+    {
+      body: "postFindProductByCategoryBody",
+      response: "postFindProductByCategoryResponse",
+      detail: {
+        tags: ["PRODUCT"],
+      },
+    },
+  )
   .use(AuthorizationMiddleWare)
   .use(RoleMiddleWare)
   .post(
