@@ -1,5 +1,5 @@
 import { SetElysia } from "config"
-import { desc, like } from "drizzle-orm"
+import { and, desc, like } from "drizzle-orm"
 import db, { categories, products } from "~/database/schema"
 import { s3ObjectUrl } from "../../../../aws/s3"
 
@@ -27,8 +27,8 @@ const postFindProductByCategory = async <T extends postFindProductByCategoryDto>
         price: products.price,
       })
       .from(products)
-      .innerJoin(categories, like(categories.id, categories_id))
-      .where(like(products.author_id, author_id))
+      .innerJoin(categories, like(categories.id, products.categories_id))
+      .where(and(like(products.author_id, author_id), like(categories.id, categories_id)))
       .orderBy(desc(products.create_at))
     return {
       message: "Ok",
