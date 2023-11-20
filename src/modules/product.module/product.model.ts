@@ -96,6 +96,22 @@ const createCategoriesBodyDto = t.Object({
 const createCategoriesResponseDto = t.Object({
   message: t.String(),
 })
+const postFindProductByCategoryBodyDto = t.Object({
+  categories_id: t.String({ default: "bfe0dab6-85c6-11ee-9ea3-063ae024" }),
+  author_id: t.String({ default: "89d057c5-85c3-11ee-9ea3-063ae024" }),
+})
+const postFindProductByCategoryResponseDto = t.Object({
+  message: t.String(),
+  data: t.Array(
+    t.Object({
+      product_id: t.String(),
+      title: t.String(),
+      picture: t.String(),
+      description: t.String(),
+      price: t.Number(),
+    }),
+  ),
+})
 export const productModel = new Elysia().model({
   postSearchProductByIdBody: postSearchProductByIdBodyDto,
   postSearchProductByIdResponse: postSearchProductByIdResponseDto,
@@ -104,6 +120,9 @@ export const productModel = new Elysia().model({
   postSearchProductResponse: postSearchProductResponseDto,
 
   getCategoriesResponse: getCategoriesResponseDto,
+
+  postFindProductByCategoryBody: postFindProductByCategoryBodyDto,
+  postFindProductByCategoryResponse: postFindProductByCategoryResponseDto,
 
   createProductBody: createProductBodyDto,
   createProductResponse: createProductResponse,

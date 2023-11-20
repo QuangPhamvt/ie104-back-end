@@ -3,6 +3,7 @@ import { postSearchProduct } from "./postSearchProduct"
 import { getCategories } from "./getCategories"
 import { createProduct } from "./createProduct"
 import { createCategories } from "./createCategories"
+import postFindProductByCategory from "./postFindProductByCategory"
 
 const productService = {
   postSearchProductById,
@@ -10,5 +11,6 @@ const productService = {
   getCategories,
   createProduct,
   createCategories,
+  postFindProductByCategory,
 }
 export default productService

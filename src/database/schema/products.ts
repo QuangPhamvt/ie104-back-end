@@ -9,13 +9,13 @@ export const products = mysqlTable("products", {
     .primaryKey()
     .default(sql`(uuid())`),
   author_id: varchar("author_id", { length: 32 }),
-  title: varchar("title", { length: 255 }),
+  title: varchar("title", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 255 }),
-  description: text("description"),
-  location: varchar("location", { length: 32 }),
+  description: text("description").notNull(),
+  location: varchar("location", { length: 32 }).notNull(),
   slug_location: varchar("slug_location", { length: 32 }),
   picture: varchar("picture", { length: 255 }),
-  price: int("price", {}),
+  price: int("price", {}).notNull(),
   create_at: datetime("create_at").default(sql`CURRENT_TIMESTAMP`),
   categories_id: varchar("categories_id", { length: 32 }),
 })
