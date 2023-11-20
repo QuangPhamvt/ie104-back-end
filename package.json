@@ -10,7 +10,7 @@
     "db:generate": "bunx drizzle-kit generate:mysql",
     "db:pull": "bunx drizzle-kit introspect:mysql",
     "db:push": "bunx drizzle-kit push:mysql",
-    "db:studio": "bunx drizzle-kit studio --port 4000",
+    "db:studio": "bunx drizzle-kit studio --port 3002",
     "prepare": "husky install"
   },
   "dependencies": {
