@@ -1,6 +1,7 @@
 import { relations, sql } from "drizzle-orm"
 import { mysqlTable, varchar } from "drizzle-orm/mysql-core"
 import { products } from "./products"
+import { carts } from "./carts"
 
 export const users = mysqlTable(`users`, {
   id: varchar("id", { length: 32 })
@@ -13,4 +14,5 @@ export const users = mysqlTable(`users`, {
 })
 export const usersRelations = relations(users, ({ many }) => ({
   products: many(products),
+  carts: many(carts),
 }))

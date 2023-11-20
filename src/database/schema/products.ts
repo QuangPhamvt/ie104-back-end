@@ -2,6 +2,7 @@ import { relations, sql } from "drizzle-orm"
 import { datetime, int, mysqlTable, text, varchar } from "drizzle-orm/mysql-core"
 import { categories } from "./categories"
 import { users } from "./users"
+import { cart_items } from "./carts"
 
 export const products = mysqlTable("products", {
   id: varchar("id", { length: 32 })
@@ -19,7 +20,7 @@ export const products = mysqlTable("products", {
   categories_id: varchar("categories_id", { length: 32 }),
 })
 
-export const productsRelations = relations(products, ({ one }) => ({
+export const productsRelations = relations(products, ({ one, many }) => ({
   categories: one(categories, {
     fields: [products.categories_id],
     references: [categories.id],
@@ -28,4 +29,5 @@ export const productsRelations = relations(products, ({ one }) => ({
     fields: [products.author_id],
     references: [users.id],
   }),
+  cart_items: many(cart_items),
 }))
