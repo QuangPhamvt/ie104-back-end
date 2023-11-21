@@ -31,6 +31,7 @@ export const postFindOrderByCartResponseDto = t.Object({
 })
 export const postCreateOrderBodyDto = t.Object({
   seller_id: t.String(),
+  cart_id: t.String(),
   price: t.Number(),
   products: t.Array(
     t.Object({
