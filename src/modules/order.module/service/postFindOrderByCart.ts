@@ -22,6 +22,7 @@ export const postFindOrderByCart = async <T extends postFindOrderByCartDto>(prop
       .select({
         cart_id: carts.id,
         price: carts.price,
+        status: carts.status,
       })
       .from(carts)
       .where(like(carts.id, cart_id))
@@ -82,6 +83,7 @@ export const postFindOrderByCart = async <T extends postFindOrderByCartDto>(prop
         {
           cart: {
             cart_id: cart.cart_id,
+            status: cart.status,
             price: cart.price,
             cart_items: cart_item,
           },
