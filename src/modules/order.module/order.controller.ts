@@ -8,6 +8,20 @@ orderController
   .use(AuthorizationMiddleWare)
   .use(orderModel)
   .post(
+    "/create",
+    ({ request: { headers }, body, set }) => {
+      return orderService.postCreateOrder({ headers, body, set })
+    },
+    {
+      body: "postCreateOrderBody",
+      response: "postCreateOrderResponse",
+      detail: {
+        tags: ["ORDER"],
+        security: [{ BearerAuth: [] }],
+      },
+    },
+  )
+  .post(
     "/find/cartId",
     ({ request: { headers }, body, set }) => {
       return orderService.postFindOrderByCart({ headers, body, set })

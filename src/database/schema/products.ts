@@ -3,6 +3,7 @@ import { datetime, int, mysqlTable, text, varchar } from "drizzle-orm/mysql-core
 import { categories } from "./categories"
 import { users } from "./users"
 import { cart_items } from "./carts"
+import { order_items } from "./orders"
 
 export const products = mysqlTable("products", {
   id: varchar("id", { length: 32 })
@@ -30,4 +31,5 @@ export const productsRelations = relations(products, ({ one, many }) => ({
     references: [users.id],
   }),
   cart_items: many(cart_items),
+  order_items: many(order_items),
 }))

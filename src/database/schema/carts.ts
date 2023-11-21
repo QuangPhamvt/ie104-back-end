@@ -8,7 +8,7 @@ export const carts = mysqlTable("carts", {
     .primaryKey()
     .default(sql`(uuid())`),
   author_id: varchar("author_id", { length: 32 }),
-  status: varchar("status", { length: 12, enum: ["prepare", "ordered"] }),
+  status: varchar("status", { length: 12, enum: ["prepare", "deny", "processing", "ordered"] }),
   price: int("price").notNull(),
   create_at: datetime("create_at").default(sql`CURRENT_TIMESTAMP`),
   update_at: datetime("update_at"),

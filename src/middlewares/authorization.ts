@@ -1,6 +1,6 @@
+import Elysia from "elysia"
 import { JWT_ACCESS_TOKEN, SetElysia } from "config"
 import { like } from "drizzle-orm"
-import Elysia from "elysia"
 import db, { users } from "~/database/schema"
 
 const authorization = new Elysia()
