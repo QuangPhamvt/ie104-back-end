@@ -23,11 +23,13 @@
     "@elysiajs/swagger": "^0.7.3",
     "drizzle-orm": "^0.29.0",
     "elysia": "latest",
-    "mysql2": "^3.6.3"
+    "mysql2": "^3.6.3",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.7.2",
     "@commitlint/config-conventional": "^17.7.0",
+    "@types/uuid": "^9.0.7",
     "bun-types": "latest",
     "drizzle-kit": "^0.20.2",
     "husky": "^8.0.0",

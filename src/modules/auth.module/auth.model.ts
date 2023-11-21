@@ -21,8 +21,11 @@ export const signUpDto = t.Partial(
   t.Object({
     email: t.String({ format: "email", default: "buyer@example.com" }),
     password: t.String({ description: "This is password", default: "123456" }),
-    username: t.String({ default: "buyer" }),
-    role: t.Enum(ROLE, { default: "buyer" }),
+    username: t.String({ default: "seller" }),
+    role: t.Enum(ROLE, { default: "seller" }),
+    province: t.String({ default: "Thành phố Hồ Chí Minh" }),
+    district: t.String({ default: "Thành phố Thủ Đức" }),
+    ward: t.String({ default: "Phường Hiệp Bình Chánh" }),
     acqId: t.String({ description: "Link to get acqId bank: https://api.vietqr.io/v2/banks", default: "970436" }),
     accountNo: t.String({ default: "1025871607" }),
     accountName: t.String({ default: "Pham Minh Quang" }),
