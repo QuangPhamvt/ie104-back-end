@@ -1,7 +1,9 @@
 import { SetElysia } from "config"
 import { like, or } from "drizzle-orm"
 import db, { banks, users } from "~/database/schema"
+import { address } from "~/database/schema/address"
 import { ARQ_ID } from "~/utilities"
+import { v4 as uuidv4 } from "uuid"
 
 interface authServiceDto {
   set: any
@@ -21,6 +23,9 @@ interface signUpDto extends Partial<authServiceDto> {
     password?: string
     username?: string
     role?: "buyer" | "seller"
+    province?: string
+    district?: string
+    ward?: string
     acqId?: string
     accountNo?: string
     accountName?: string
@@ -40,6 +45,7 @@ interface checkAccountDto {
   acqId: string
   accountNo: string
 }
+
 //SIGN IN
 export const signIn = async (context: signInDto) => {
   const {
@@ -50,6 +56,10 @@ export const signIn = async (context: signInDto) => {
   } = context
   // Check User exist
   const [user] = await db.select().from(users).where(like(users.email, email))
+  const [Address] = await db
+    .select()
+    .from(address)
+    .where(like(address.id, user.address_id || ""))
   if (!user) {
     set.status = 400
     return {
@@ -69,12 +79,18 @@ export const signIn = async (context: signInDto) => {
     email: user.email,
     username: user.username,
     role: user.role,
+    province: Address.province,
+    district: Address.district,
+    ward: Address.ward,
   })
   const refresh_token = await JWT_REFRESH_TOKEN.sign({
     id: user.id,
     email: user.email,
     username: user.username,
     role: user.role,
+    province: Address.province,
+    district: Address.district,
+    ward: Address.ward,
   })
   set.status = "Created"
   return {
@@ -92,7 +108,7 @@ export const signUp = async (context: signUpDto) => {
     set,
     JWT_ACCESS_TOKEN,
     JWT_REFRESH_TOKEN,
-    body: { email, username, password, role, acqId, accountNo, accountName },
+    body: { email, username, password, role, acqId, accountNo, accountName, province, district, ward },
   } = context
   if (!email || !username) {
     set.status = 400
@@ -123,7 +139,9 @@ export const signUp = async (context: signUpDto) => {
     cost: 4,
   })
   // INSERT USER
-  await db.insert(users).values({ email, username, password: hashPassword, role })
+  const addressUuid = uuidv4()
+  await db.insert(address).values({ id: addressUuid, province, district, ward })
+  await db.insert(users).values({ email, username, password: hashPassword, role, address_id: addressUuid })
   const [newUser] = await db.select().from(users).where(like(users.email, email))
   // CREATE TOKEN
   const access_token = await JWT_ACCESS_TOKEN.sign({
@@ -131,12 +149,18 @@ export const signUp = async (context: signUpDto) => {
     email: newUser.email,
     username: newUser.username,
     role: newUser.role,
+    province,
+    district,
+    ward,
   })
   const refresh_token = await JWT_REFRESH_TOKEN.sign({
     id: newUser.id,
     email: newUser.email,
     username: newUser.username,
     role: newUser.role,
+    province,
+    district,
+    ward,
   })
 
   if (role === "seller") {

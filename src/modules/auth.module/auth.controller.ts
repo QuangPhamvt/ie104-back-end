@@ -1,4 +1,4 @@
-import Elysia, { t } from "elysia"
+import Elysia from "elysia"
 import { JWT_ACCESS_TOKEN, JWT_REFRESH_TOKEN } from "config"
 import authModel from "~/modules/auth.module/auth.model"
 import { checkAccount, profile, refreshToken, signIn, signUp } from "./auth.service"
