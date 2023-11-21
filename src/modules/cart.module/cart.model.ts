@@ -5,7 +5,13 @@ const getCartListResponseDto = t.Object({
   data: t.Array(
     t.Object({
       id: t.String(),
-      status: t.Union([t.Literal("prepare"), t.Literal("ordered"), t.Null()]),
+      status: t.Union([
+        t.Literal("prepare"),
+        t.Literal("ordered"),
+        t.Literal("deny"),
+        t.Literal("processing"),
+        t.Null(),
+      ]),
       price: t.Number(),
       create_at: t.Union([t.Date(), t.Null()]),
     }),
