@@ -44,6 +44,8 @@ export const postFindOrderByCart = async <T extends postFindOrderByCartDto>(prop
       }),
     )
 
+    console.log(cart_item)
+
     const [seller] = await db
       .select({
         seller_id: users.id,
@@ -64,18 +66,12 @@ export const postFindOrderByCart = async <T extends postFindOrderByCartDto>(prop
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        // accountNo: bank.account_no,
-        // accountName: bank.account_name,
-        // acqId: bank.acqId,
-        // amount: cart.price,
-        // template: "qr_only",
-        accountNo: 113366668888,
-        accountName: "QUY VAC XIN PHONG CHONG COVID",
-        acqId: 970415,
-        amount: 79000,
-        addInfo: "Ung Ho Quy Vac Xin",
-        format: "text",
-        template: "compact",
+        accountNo: bank.account_no,
+        accountName: bank.account_name,
+        acqId: bank.acqId,
+        addInfo: `Chuyen Tien cho ${bank.account_name}`,
+        amount: cart.price,
+        template: "t42wpo7",
       }),
     })
     response = await response.json()
