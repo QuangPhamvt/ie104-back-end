@@ -30,6 +30,10 @@ orderController
     {
       body: "updateStatusOrderBody",
       response: "updateStatusOrderResponse",
+      detail: {
+        tags: ["ORDER"],
+        security: [{ BearerAuth: [] }],
+      },
     },
   )
   .post(
