@@ -39,6 +39,7 @@ jobs:
 
       - name: Edit .env
         run: |
+
           pm2 stop "ie104-back-end"
           rm -rf .env
           touch .env
