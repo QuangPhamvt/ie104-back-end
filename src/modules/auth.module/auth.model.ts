@@ -34,10 +34,6 @@ export const signUpDto = t.Partial(
 export const signUpResponseDto = t.Partial(
   t.Object({
     message: t.String(),
-    data: t.Object({
-      access_token: t.String(),
-      refresh_token: t.String(),
-    }),
   }),
 )
 export const refreshTokenDto = t.Object({
@@ -84,12 +80,26 @@ export const profileResponseDto = t.Object({
     }),
   }),
 })
+const signUpVerifyBodyDto = t.Object({
+  token: t.String(),
+})
+const signUpVerifyResponseDto = t.Object({
+  message: t.String(),
+  data: t.Object({
+    access_token: t.String(),
+    refresh_token: t.String(),
+  }),
+})
+
 const authModel = new Elysia().model({
   signIn: signInDto,
   signInResponse: signInResponseDto,
 
   signUp: signUpDto,
   signUpResponse: signUpResponseDto,
+
+  signUpVerifyBody: signUpVerifyBodyDto,
+  signUpVerifyResponse: signUpVerifyResponseDto,
 
   refreshToken: refreshTokenDto,
   refreshTokenResponse: refreshTokenResponseDto,

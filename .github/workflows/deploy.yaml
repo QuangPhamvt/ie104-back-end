@@ -5,6 +5,10 @@ env:
   JWT_ACCESS_EXPIRY: "1d"
   JWT_REFRESH_SECRETKEY: "ie104_refresh_token"
   JWT_REFRESH_EXPIRY: "3d"
+  JWT_SIGNUP_TOKEN: "signup"
+  JWT_SIGNUP_EXPIRY: "1d"
+  URL_CLIENT: "http://fe.ie104.customafk.com/signup/token"
+  RESEND_KEY: ${{secrets.RESEND_KEY}}
   AWS_ACCESSKEY_ID: ${{secrets.AWS_ACCESSKEY_ID}}
   AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
   AWS_BUCKET_NAME: ${{secrets.AWS_BUCKET_NAME}}
@@ -43,16 +47,25 @@ jobs:
           pm2 stop "ie104-back-end"
           rm -rf .env
           touch .env
+
           echo "#DATABASE" >> .env
           echo "DATABASE_URL=${{env.DATABASE_URL}}" >> .env
           echo "#SERVER RUNNING" >> .env
           echo "SERVER_PORT=3000" >> .env
+
           echo "#Enviroment in Server"
           echo "JWT_ACCESS_SECRETKEY=${{env.JWT_ACCESS_SECRETKEY}}" >> .env
           echo "JWT_ACCESS_EXPIRY=${{env.JWT_ACCESS_EXPIRY}}" >> .env
           echo "JWT_REFRESH_SECRETKEY=${{env.JWT_REFRESH_SECRETKEY}}" >> .env
           echo "JWT_REFRESH_EXPIRY=${{env.JWT_REFRESH_EXPIRY}}" >> .env
-          echo "#AWS key "
+          echo "JWT_SIGNUP_TOKEN=${{env.JWT_SIGNUP_TOKEN}}" >> .env
+          echo "JWT_SIGNUP_EXPIRY=${{env.JWT_SIGNUP_EXPIRY}}" >> .env
+
+          echo "#SEND EMAIL CHECK"
+          echo "URL_CLIENT=${{env.URL_CLIENT}}" >> .env
+          echo "RESEND_KEY=${{env.RESEND_KEY}}" >> .env
+
+          echo "#AWS key"
           echo "AWS_REGION=ap-southeast-1" >> .env
           echo "AWS_ACCESSKEY_ID=${{env.AWS_ACCESSKEY_ID}}" >> .env
           echo "AWS_SECRET_ACCESS_KEY=${{env.AWS_SECRET_ACCESS_KEY}}" >> .env

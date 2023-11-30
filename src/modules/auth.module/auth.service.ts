@@ -1,14 +1,18 @@
-import { SetElysia } from "config"
+import { JWT_REFRESH_TOKEN, SetElysia } from "config"
 import { like, or } from "drizzle-orm"
 import db, { banks, users } from "~/database/schema"
 import { address } from "~/database/schema/address"
 import { ARQ_ID } from "~/utilities"
 import { v4 as uuidv4 } from "uuid"
+import { Resend } from "resend"
 
+const reSend = new Resend(process.env.RESEND_KEY || "")
+const urlClient = process.env.URL_CLIENT
 interface authServiceDto {
   set: any
   JWT_ACCESS_TOKEN: any
   JWT_REFRESH_TOKEN: any
+  JWT_SIGNUP_TOKEN: any
   body: {}
 }
 interface signInDto extends Partial<authServiceDto> {
@@ -29,6 +33,11 @@ interface signUpDto extends Partial<authServiceDto> {
     acqId?: string
     accountNo?: string
     accountName?: string
+  }
+}
+interface signUpVerifyDto extends Partial<authServiceDto> {
+  body: {
+    token: string
   }
 }
 interface refreshTokenDto extends Partial<authServiceDto> {
@@ -106,8 +115,7 @@ export const signIn = async (context: signInDto) => {
 export const signUp = async (context: signUpDto) => {
   const {
     set,
-    JWT_ACCESS_TOKEN,
-    JWT_REFRESH_TOKEN,
+    JWT_SIGNUP_TOKEN,
     body: { email, username, password, role, acqId, accountNo, accountName, province, district, ward },
   } = context
   if (!email || !username) {
@@ -138,26 +146,11 @@ export const signUp = async (context: signUpDto) => {
     algorithm: "bcrypt",
     cost: 4,
   })
-  // INSERT USER
-  const addressUuid = uuidv4()
-  await db.insert(address).values({ id: addressUuid, province, district, ward })
-  await db.insert(users).values({ email, username, password: hashPassword, role, address_id: addressUuid })
-  const [newUser] = await db.select().from(users).where(like(users.email, email))
-  // CREATE TOKEN
-  const access_token = await JWT_ACCESS_TOKEN.sign({
-    id: newUser.id,
-    email: newUser.email,
-    username: newUser.username,
-    role: newUser.role,
-    province,
-    district,
-    ward,
-  })
-  const refresh_token = await JWT_REFRESH_TOKEN.sign({
-    id: newUser.id,
-    email: newUser.email,
-    username: newUser.username,
-    role: newUser.role,
+  const token = await JWT_SIGNUP_TOKEN.sign({
+    email: email,
+    username: username,
+    password: hashPassword,
+    role: role,
     province,
     district,
     ward,
@@ -170,20 +163,161 @@ export const signUp = async (context: signUpDto) => {
         message: "Not have bin or account",
       }
     }
-    await db.insert(banks).values({
-      author_id: newUser.id,
-      acqId: acqId,
-      account_name: accountName,
-      account_no: accountNo,
+    const token = await JWT_SIGNUP_TOKEN.sign({
+      email: email,
+      username: username,
+      password: hashPassword,
+      role: role,
+      province,
+      district,
+      ward,
+      acqId,
+      accountNo,
+      accountName,
     })
+    await reSend.emails.send({
+      from: "QuangPham <BunShop@customafk.com>",
+      to: [`${email}`],
+      subject: `Confirm your BunShop Account`,
+      text: `Please click here to continue signup process ${urlClient}?token=${token}`,
+    })
+    return {
+      message: "Please check your email",
+    }
   }
-  set.status = "Created"
+  set.status = 200
+  await reSend.emails.send({
+    from: "Name <BunShop@customafk.com>",
+    to: [`${email}`],
+    subject: `Confirm your BunShop Account`,
+    text: `Please click here to continue signup process ${urlClient}?token=${token}`,
+  })
   return {
-    message: "Created",
-    data: {
-      access_token,
-      refresh_token,
-    },
+    message: "Please check your email",
+  }
+}
+
+export const signUpVerify = async <T extends signUpVerifyDto>(props: T) => {
+  const { set, JWT_SIGNUP_TOKEN, JWT_ACCESS_TOKEN, JWT_REFRESH_TOKEN, body } = props
+  const { token } = body
+  try {
+    const jwtVerify = await JWT_SIGNUP_TOKEN.verify(token)
+    if (!jwtVerify) {
+      set.status = 403
+      return {
+        message: "forbidden",
+        data: {
+          access_token: "",
+          refresh_token: "",
+        },
+      }
+    }
+    const { email, username, password, role, province, district, ward, acqId, accountNo, accountName } = jwtVerify
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(or(like(users.email, email), like(users.username, username)))
+    if (user) {
+      set.status = 403
+      return {
+        message: "forbidden",
+        data: {
+          access_token: "",
+          refresh_token: "",
+        },
+      }
+    }
+
+    if (jwtVerify.role === "buyer") {
+      const userUuid = uuidv4()
+      const addressUuid = uuidv4()
+      await db.insert(users).values({ id: userUuid, email, username, password, role, address_id: addressUuid })
+      await db.insert(address).values({ id: addressUuid, province, district, ward })
+      const [user] = await db.select().from(users).where(like(users.email, email))
+      const access_token = await JWT_ACCESS_TOKEN.sign({
+        id: user.id,
+        email,
+        username,
+        role,
+        province,
+        district,
+        ward,
+      })
+      const refresh_token = await JWT_REFRESH_TOKEN.sign({
+        id: user.id,
+        email,
+        username,
+        role,
+        province,
+        district,
+        ward,
+      })
+      set.status = 201
+      return {
+        message: "Created",
+        data: {
+          access_token,
+          refresh_token,
+        },
+      }
+    }
+
+    if (jwtVerify.role === "seller") {
+      const userUuid = uuidv4()
+      const addressUuid = uuidv4()
+      const bankUuid = uuidv4()
+      await db.insert(users).values({ id: userUuid, email, username, password, role, address_id: addressUuid })
+      await db.insert(address).values({ id: addressUuid, province, district, ward })
+      await db
+        .insert(banks)
+        .values({ id: bankUuid, author_id: userUuid, acqId, account_no: accountNo, account_name: accountName })
+      const [user] = await db.select().from(users).where(like(users.email, email))
+      const access_token = await JWT_ACCESS_TOKEN.sign({
+        id: user.id,
+        email,
+        username,
+        role,
+        province,
+        district,
+        ward,
+      })
+      const refresh_token = await JWT_REFRESH_TOKEN.sign({
+        id: user.id,
+        email,
+        username,
+        role,
+        province,
+        district,
+        ward,
+      })
+      set.status = 201
+      return {
+        message: "Created",
+        data: {
+          access_token,
+          refresh_token,
+        },
+      }
+    }
+
+    set.status = 404
+    return {
+      message: "Bad request",
+      data: {
+        access_token: "",
+        refresh_token: "",
+      },
+    }
+  } catch (error) {
+    set.status = "Internal Server Error"
+    console.log(error)
+    return {
+      message: "Internal Server Error",
+      data: {
+        access_token: "",
+        refresh_token: "",
+      },
+    }
   }
 }
 

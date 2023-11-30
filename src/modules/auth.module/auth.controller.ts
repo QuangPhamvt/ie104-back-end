@@ -1,8 +1,9 @@
 import Elysia from "elysia"
 import { JWT_ACCESS_TOKEN, JWT_REFRESH_TOKEN } from "config"
 import authModel from "~/modules/auth.module/auth.model"
-import { checkAccount, profile, refreshToken, signIn, signUp } from "./auth.service"
+import { checkAccount, profile, refreshToken, signIn, signUp, signUpVerify } from "./auth.service"
 import authorization from "~/middlewares/authorization"
+import { JWT_SIGNUP_TOKEN } from "~/config/jwt.token"
 
 const authController = new Elysia()
 const DETAIL = {
@@ -14,6 +15,7 @@ authController
   .use(authModel)
   .use(JWT_ACCESS_TOKEN)
   .use(JWT_REFRESH_TOKEN)
+  .use(JWT_SIGNUP_TOKEN)
   .post(
     "/sign-in",
     (context) => {
@@ -31,13 +33,23 @@ authController
   .post(
     "/sign-up",
     (context) => {
-      const { JWT_ACCESS_TOKEN, JWT_REFRESH_TOKEN, body, set } = context
-      return signUp({ JWT_ACCESS_TOKEN, JWT_REFRESH_TOKEN, set, body })
+      const { body, set, JWT_SIGNUP_TOKEN } = context
+      return signUp({ set, body, JWT_SIGNUP_TOKEN })
     },
     {
       body: "signUp",
       response: "signUpResponse",
       ...DETAIL,
+    },
+  )
+  .post(
+    "/sign-up/verify",
+    ({ body, set, JWT_SIGNUP_TOKEN, JWT_ACCESS_TOKEN, JWT_REFRESH_TOKEN }) => {
+      return signUpVerify({ body, set, JWT_SIGNUP_TOKEN, JWT_ACCESS_TOKEN, JWT_REFRESH_TOKEN })
+    },
+    {
+      body: "signUpVerifyBody",
+      response: "signUpVerifyResponse",
     },
   )
   .post(
