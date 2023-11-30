@@ -24,6 +24,7 @@
     "drizzle-orm": "^0.29.0",
     "elysia": "latest",
     "mysql2": "^3.6.3",
+    "resend": "^2.0.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
@@ -31,7 +32,7 @@
     "@commitlint/config-conventional": "^17.7.0",
     "@types/uuid": "^9.0.7",
     "bun-types": "latest",
-    "drizzle-kit": "^0.20.2",
+    "drizzle-kit": "latest",
     "husky": "^8.0.0",
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.3"
