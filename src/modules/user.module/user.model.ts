@@ -33,11 +33,6 @@ const updateDetailBodyDto = t.Object({
     district: t.String(),
     ward: t.String(),
   }),
-  bank: t.Object({
-    account_no: t.String(),
-    account_name: t.String(),
-    acqId: t.String(),
-  }),
 })
 const updateDetailResponseDto = t.Object({
   message: t.String(),
