@@ -5,6 +5,8 @@ import { address } from "~/database/schema/address"
 import { ARQ_ID } from "~/utilities"
 import { v4 as uuidv4 } from "uuid"
 import { Resend } from "resend"
+import WelcomeEmail from "../../../emails"
+import React from "react"
 
 const reSend = new Resend(process.env.RESEND_KEY || "")
 const urlClient = process.env.URL_CLIENT
@@ -179,7 +181,7 @@ export const signUp = async (context: signUpDto) => {
       from: "QuangPham <BunShop@customafk.com>",
       to: [`${email}`],
       subject: `Confirm your BunShop Account`,
-      text: `Please click here to continue signup process ${urlClient}?token=${token}`,
+      react: <WelcomeEmail userFirstName={email} url={`${urlClient}?token=${token}`} />,
     })
     return {
       message: "Please check your email",
@@ -190,7 +192,7 @@ export const signUp = async (context: signUpDto) => {
     from: "Name <BunShop@customafk.com>",
     to: [`${email}`],
     subject: `Confirm your BunShop Account`,
-    text: `Please click here to continue signup process ${urlClient}?token=${token}`,
+    react: <WelcomeEmail userFirstName={email} url={`${urlClient}?token=${token}`} />,
   })
   return {
     message: "Please check your email",

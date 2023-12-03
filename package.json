@@ -11,7 +11,8 @@
     "db:pull": "bunx drizzle-kit introspect:mysql",
     "db:push": "bunx drizzle-kit push:mysql",
     "db:studio": "bunx drizzle-kit studio --host 127.0.0.1 --port 3002 --verbose",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "email": "email dev"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.427.0",
@@ -21,15 +22,19 @@
     "@elysiajs/cors": "^0.7.1",
     "@elysiajs/jwt": "^0.7.0",
     "@elysiajs/swagger": "^0.7.3",
+    "@react-email/components": "0.0.12",
     "drizzle-orm": "^0.29.0",
     "elysia": "latest",
     "mysql2": "^3.6.3",
+    "react": "^18.2.0",
+    "react-email": "1.10.0",
     "resend": "^2.0.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.7.2",
     "@commitlint/config-conventional": "^17.7.0",
+    "@types/react": "^18.2.41",
     "@types/uuid": "^9.0.7",
     "bun-types": "latest",
     "drizzle-kit": "latest",
