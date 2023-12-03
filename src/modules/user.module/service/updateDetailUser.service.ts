@@ -13,11 +13,6 @@ type updateDetailUserDto = {
       district: string
       ward: string
     }
-    bank: {
-      account_no: string
-      account_name: string
-      acqId: string
-    }
   }
 }
 export const updateDetailUser = async (props: updateDetailUserDto) => {
@@ -26,7 +21,6 @@ export const updateDetailUser = async (props: updateDetailUserDto) => {
   const {
     username,
     address: { province, district, ward },
-    bank: { acqId, account_name, account_no },
   } = body
   try {
     await db.update(users).set({ username }).where(like(users.id, user_id))
@@ -35,7 +29,6 @@ export const updateDetailUser = async (props: updateDetailUserDto) => {
       .update(address)
       .set({ province, district, ward })
       .where(like(address.id, user.address_id || ""))
-    await db.update(banks).set({ acqId, account_name, account_no }).where(like(banks.author_id, user_id))
     return {
       message: "oke",
     }
