@@ -9,7 +9,8 @@ type getDetailUserDto = {
 }
 export const getDetailUser = async (props: getDetailUserDto) => {
   const { headers, set } = props
-  const user_id = headers.get("user_id") || ""
+  const user_id = headers.get("userId") || ""
+
   try {
     const [user] = await db
       .select({
