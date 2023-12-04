@@ -115,56 +115,40 @@ export const signIn = async (context: signInDto) => {
 
 //SIGN UP
 export const signUp = async (context: signUpDto) => {
-  const {
-    set,
-    JWT_SIGNUP_TOKEN,
-    body: { email, username, password, role, acqId, accountNo, accountName, province, district, ward },
-  } = context
-  if (!email || !username) {
-    set.status = 400
-    return {
-      message: "Not have username or email",
-    }
-  }
-
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(or(like(users.email, email), like(users.username, username)))
-  if (user) {
-    set.status = "Bad Request"
-    return {
-      message: "email or name is exist!",
-    }
-  }
-  if (!password) {
-    set.status = 400
-    return {
-      message: "Bad Request",
-    }
-  }
-  // HASH Password
-  const hashPassword = await Bun.password.hash(password, {
-    algorithm: "bcrypt",
-    cost: 4,
-  })
-  const token = await JWT_SIGNUP_TOKEN.sign({
-    email: email,
-    username: username,
-    password: hashPassword,
-    role: role,
-    province,
-    district,
-    ward,
-  })
-
-  if (role === "seller") {
-    if (!acqId || !accountNo || !accountName) {
+  try {
+    const {
+      set,
+      JWT_SIGNUP_TOKEN,
+      body: { email, username, password, role, acqId, accountNo, accountName, province, district, ward },
+    } = context
+    if (!email || !username) {
       set.status = 400
       return {
-        message: "Not have bin or account",
+        message: "Not have username or email",
       }
     }
+
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(or(like(users.email, email), like(users.username, username)))
+    if (user) {
+      set.status = "Bad Request"
+      return {
+        message: "email or name is exist!",
+      }
+    }
+    if (!password) {
+      set.status = 400
+      return {
+        message: "Bad Request",
+      }
+    }
+    // HASH Password
+    const hashPassword = await Bun.password.hash(password, {
+      algorithm: "bcrypt",
+      cost: 4,
+    })
     const token = await JWT_SIGNUP_TOKEN.sign({
       email: email,
       username: username,
@@ -173,12 +157,40 @@ export const signUp = async (context: signUpDto) => {
       province,
       district,
       ward,
-      acqId,
-      accountNo,
-      accountName,
     })
+
+    if (role === "seller") {
+      if (!acqId || !accountNo || !accountName) {
+        set.status = 400
+        return {
+          message: "Not have bin or account",
+        }
+      }
+      const token = await JWT_SIGNUP_TOKEN.sign({
+        email: email,
+        username: username,
+        password: hashPassword,
+        role: role,
+        province,
+        district,
+        ward,
+        acqId,
+        accountNo,
+        accountName,
+      })
+      await reSend.emails.send({
+        from: "QuangPham <BunShop@customafk.com>",
+        to: [`${email}`],
+        subject: `Confirm your BunShop Account`,
+        react: <WelcomeEmail userFirstName={email} url={`${urlClient}?token=${token}`} />,
+      })
+      return {
+        message: "Please check your email",
+      }
+    }
+    set.status = 200
     await reSend.emails.send({
-      from: "QuangPham <BunShop@customafk.com>",
+      from: "Name <BunShop@customafk.com>",
       to: [`${email}`],
       subject: `Confirm your BunShop Account`,
       react: <WelcomeEmail userFirstName={email} url={`${urlClient}?token=${token}`} />,
@@ -186,16 +198,11 @@ export const signUp = async (context: signUpDto) => {
     return {
       message: "Please check your email",
     }
-  }
-  set.status = 200
-  await reSend.emails.send({
-    from: "Name <BunShop@customafk.com>",
-    to: [`${email}`],
-    subject: `Confirm your BunShop Account`,
-    react: <WelcomeEmail userFirstName={email} url={`${urlClient}?token=${token}`} />,
-  })
-  return {
-    message: "Please check your email",
+  } catch (error) {
+    console.log(error)
+    return {
+      message: "Something wrong",
+    }
   }
 }
 
