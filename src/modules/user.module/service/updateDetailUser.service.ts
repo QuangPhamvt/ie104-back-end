@@ -17,7 +17,7 @@ type updateDetailUserDto = {
 }
 export const updateDetailUser = async (props: updateDetailUserDto) => {
   const { headers, set, body } = props
-  const user_id = headers.get("user_id") || ""
+  const user_id = headers.get("userId") || ""
   const {
     username,
     address: { province, district, ward },
@@ -34,6 +34,7 @@ export const updateDetailUser = async (props: updateDetailUserDto) => {
     }
   } catch (error) {
     set.status = "Internal Server Error"
+    console.log(error)
     return {
       message: "Internal Server Error",
     }
